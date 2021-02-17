@@ -1,0 +1,15 @@
+server:
+  servlet:
+    context-path: /statistics
+  port: 7000
+
+feign:
+  client:
+    config:
+      rates-client:
+        connectTimeout: 5000
+        readTimeout: 5000
+        loggerLevel: full
+
+rates:
+  url: https://api.exchangeratesapi.io

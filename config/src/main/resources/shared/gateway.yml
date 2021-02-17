@@ -1,0 +1,97 @@
+spring:
+  cloud:
+    circuitbreaker:
+      resilience4j:
+        enabled: true #default
+    gateway:
+      httpclient:
+        connect-timeout: 1000
+        response-timeout: 5s
+      discovery:
+        locator:
+          enabled: true
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowedOrigins: "http://localhost:80"
+            allowedMethods:
+              - GET
+              - POST
+              - OPTIONS
+      actuator:
+        verbose:
+          enabled: true # default
+
+      routes:
+        - id: auth-service
+          uri: lb://auth-service:5000
+          predicates:
+            - Path=/uaa/**
+        - id: account-service
+          uri: lb://account-service
+          predicates:
+            - Path=/accounts/**
+        - id: statistics-service
+          uri: lb://statistics-service
+          predicates:
+            - Path=/statistics/**
+        - id: notification-service
+          uri: lb://notification-service
+          predicates:
+            - Path=/notifications/**
+
+management:
+  endpoint:
+    gateway:
+      enabled: true # default value
+  endpoints:
+    web:
+      exposure:
+        include: gateway
+
+hystrix:
+  command:
+    default:
+      execution:
+        isolation:
+          thread:
+            timeoutInMilliseconds: 20000
+
+ribbon:
+  ReadTimeout: 20000
+  ConnectTimeout: 20000
+
+zuul:
+  ignoredServices: '*'
+  host:
+    connect-timeout-millis: 20000
+    socket-timeout-millis: 20000
+
+  routes:
+    auth-service:
+      path: /uaa/**
+      #url: http://auth-service:5000
+      url: http://10.100.53.106:5000
+      stripPrefix: false
+      sensitiveHeaders:
+
+    account-service:
+      path: /accounts/**
+      serviceId: account-service
+      stripPrefix: false
+      sensitiveHeaders:
+
+    statistics-service:
+      path: /statistics/**
+      serviceId: statistics-service
+      stripPrefix: false
+      sensitiveHeaders:
+
+    notification-service:
+      path: /notifications/**
+      serviceId: notification-service
+      stripPrefix: false
+      sensitiveHeaders:
+
+server:
+  port: 4000
