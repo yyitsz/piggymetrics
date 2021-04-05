@@ -1,0 +1,39 @@
+
+create
+put: localhost:7000/statistics/yyi
+
+{
+    "incomes": [
+        {
+            "title": "rent",
+            "amount": 2300,
+            "currency": "EUR","period":"DAY"
+        },
+         {
+            "title": "salay",
+            "amount": 2300,
+            "currency": "EUR","period":"DAY"
+        }
+    ],
+    "expenses": [
+        {
+            "title": "rent",
+            "amount": 233300,
+            "currency": "EUR","period":"DAY"
+        },
+         {
+            "title": "salay",
+            "amount": 2333,
+            "currency": "EUR","period":"DAY"
+        }
+    ],
+    "saving": {
+        "currency": "USD",
+        "amount": 4300,
+        "interest": 0,
+        "deposit": true,
+        "capitalization": true
+    }
+}
+
+get: localhost:7000/statistics/yyi

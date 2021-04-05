@@ -42,6 +42,8 @@ public class ExchangeRatesServiceImpl implements ExchangeRatesService {
         if (exchangeRateList.isEmpty()) {
             ExchangeRatesContainer container = client.getRates(Currency.getBase());
 
+            log.info("got exchange rate: {}", container);
+
             for (Map.Entry<String, BigDecimal> kv : container.getRates().entrySet()) {
                 try {
                     Currency currency = Currency.valueOf(kv.getKey());

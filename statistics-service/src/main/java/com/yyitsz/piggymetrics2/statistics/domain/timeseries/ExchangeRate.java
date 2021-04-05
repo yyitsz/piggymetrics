@@ -2,6 +2,9 @@ package com.yyitsz.piggymetrics2.statistics.domain.timeseries;
 
 import com.yyitsz.piggymetrics2.statistics.domain.Currency;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
@@ -10,7 +13,9 @@ import java.time.LocalDate;
 @Entity
 @Table(name = "ST_EXCH_RATE",uniqueConstraints = @UniqueConstraint(name = "ST_EXCH_RATE_UK1",columnNames = {"BUS_DATE","CCY"}))
 @SequenceGenerator(name = "ExchangeRateSeq", sequenceName = "ExchangeRateSeq")
-@Data
+@Getter
+@Setter
+@EqualsAndHashCode(callSuper = false)
 public class ExchangeRate {
     @Id
     @GeneratedValue(generator = "ExchangeRateSeq", strategy = GenerationType.SEQUENCE)

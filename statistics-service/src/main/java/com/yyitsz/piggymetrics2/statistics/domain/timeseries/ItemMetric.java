@@ -1,8 +1,11 @@
 package com.yyitsz.piggymetrics2.statistics.domain.timeseries;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.yyitsz.piggymetrics2.statistics.domain.Currency;
 import com.yyitsz.piggymetrics2.statistics.domain.TimePeriod;
-import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
@@ -11,23 +14,28 @@ import java.math.BigDecimal;
  * Represents normalized {@link com.yyitsz.piggymetrics2.statistics.domain.Item} object
  * with {@link Currency#getBase()} currency and {@link TimePeriod#getBase()} time period
  */
-@Data
+
 @MappedSuperclass
-//@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-//@DiscriminatorColumn(name = "METRIC_TYPE", discriminatorType = DiscriminatorType.STRING, length = 30)
+@Getter
+@Setter
+@EqualsAndHashCode(callSuper = false)
 public class ItemMetric {
 
     @Id
     @GeneratedValue(generator = "ItemMetricSeq", strategy = GenerationType.SEQUENCE)
     @SequenceGenerator(name = "ItemMetricSeq", sequenceName = "ItemMetricSeq")
     @Column(name = "ITEM_METRIC_ID")
+    @JsonIgnore
     private Long itemMetricId;
 
     @ManyToOne
     @JoinColumn(name = "DATA_POINT_ID")
+    @JsonIgnore
     private DataPoint dataPoint;
+
     @Column(name = "TITLE")
     private String title;
+
     @Column(name = "AMT")
     private BigDecimal amount;
 

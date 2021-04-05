@@ -3,6 +3,9 @@ package com.yyitsz.piggymetrics2.statistics.domain.timeseries;
 import com.yyitsz.piggymetrics2.statistics.domain.Currency;
 import com.yyitsz.piggymetrics2.statistics.domain.TimePeriod;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
@@ -13,14 +16,16 @@ import java.math.BigDecimal;
  */
 
 @Entity
-@DiscriminatorValue("INCOME")
+@DiscriminatorValue("EXPENSE")
 @Table(name = "ST_ITEM_METRIC",
         uniqueConstraints = @UniqueConstraint(name = "ST_ITEM_METRIC_UK1",
                 columnNames = {"DATA_POINT_ID", "METRIC_TYPE", "TITLE"})
 )
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "METRIC_TYPE", discriminatorType = DiscriminatorType.STRING, length = 30)
-@Data
+@Getter
+@Setter
+@EqualsAndHashCode(callSuper = true)
 public class ExpenseItemMetric extends ItemMetric {
     public ExpenseItemMetric() {
     }

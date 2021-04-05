@@ -4,7 +4,9 @@ server:
   port: 6000
 
 #example for feign
-feign:
+feign::
+  circuitbreaker:
+    enabled: true
   client:
     config:
       statistics-service:

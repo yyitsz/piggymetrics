@@ -34,7 +34,8 @@ public class StatisticsServiceImpl implements StatisticsService {
     @Override
     public List<DataPoint> findByAccountName(String accountName) {
         Assert.hasLength(accountName, "accountName is required.");
-        return repository.findByAccountName(accountName);
+        List<DataPoint> dataPointList = repository.findByAccountName(accountName);
+        return dataPointList;
     }
 
     /**
@@ -43,26 +44,25 @@ public class StatisticsServiceImpl implements StatisticsService {
     @Override
     public DataPoint save(String accountName, Account account) {
 
-        DataPointId pointId = new DataPointId(accountName, LocalDate.now());
+        final DataPoint dataPoint = new DataPoint();
+        dataPoint.setDate(LocalDate.now());
+        dataPoint.setAccountName(accountName);
 
         List<IncomeItemMetric> incomes = account.getIncomes().stream()
-                .map(this::createIncomeItemMetric)
+                .map(item -> createIncomeItemMetric(dataPoint, item))
                 .collect(Collectors.toList());
 
         List<ExpenseItemMetric> expenses = account.getExpenses().stream()
-                .map(this::createExpenseItemMetric)
+                .map(item -> createExpenseItemMetric(dataPoint, item))
                 .collect(Collectors.toList());
 
         Map<StatisticMetric, BigDecimal> statistics = createStatisticMetrics(incomes, expenses, account.getSaving());
 
-        DataPoint dataPoint = new DataPoint();
-        dataPoint.setDate(LocalDate.now());
-        dataPoint.setAccountName(accountName);
         dataPoint.setIncomes(incomes);
         dataPoint.setExpenses(expenses);
         dataPoint.setStatistics(statistics);
 
-        log.debug("new datapoint has been created: {}", pointId);
+        log.debug("new datapoint has been created: {},{}", accountName, dataPoint.getDate());
 
         return repository.save(dataPoint);
     }
@@ -90,21 +90,25 @@ public class StatisticsServiceImpl implements StatisticsService {
      * Normalizes given item amount to {@link Currency#getBase()} currency with
      * {@link TimePeriod#getBase()} time period
      */
-    private IncomeItemMetric createIncomeItemMetric(Item item) {
+    private IncomeItemMetric createIncomeItemMetric(DataPoint dataPoint, Item item) {
         BigDecimal amount = ratesService
                 .convert(item.getCurrency(), Currency.getBase(), item.getAmount())
                 .divide(item.getPeriod().getBaseRatio(), 4, RoundingMode.HALF_UP);
 
-        return new IncomeItemMetric(item.getTitle(), amount);
+        IncomeItemMetric incomeItemMetric = new IncomeItemMetric(item.getTitle(), amount);
+        incomeItemMetric.setDataPoint(dataPoint);
+        return incomeItemMetric;
 
     }
 
-    private ExpenseItemMetric createExpenseItemMetric(Item item) {
+    private ExpenseItemMetric createExpenseItemMetric(DataPoint dataPoint, Item item) {
         BigDecimal amount = ratesService
                 .convert(item.getCurrency(), Currency.getBase(), item.getAmount())
                 .divide(item.getPeriod().getBaseRatio(), 4, RoundingMode.HALF_UP);
 
-        return new ExpenseItemMetric(item.getTitle(), amount);
+        ExpenseItemMetric expenseItemMetric = new ExpenseItemMetric(item.getTitle(), amount);
+        expenseItemMetric.setDataPoint(dataPoint);
+        return expenseItemMetric;
 
     }
 }

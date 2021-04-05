@@ -33,5 +33,6 @@ spring:
         web-allow-others: false
 
 
+
 logging:
   level: debug

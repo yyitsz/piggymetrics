@@ -1,6 +1,12 @@
 package com.yyitsz.piggymetrics2.statistics.domain.timeseries;
 
-import lombok.Data;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
+import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
@@ -20,12 +26,15 @@ import static javax.persistence.CascadeType.ALL;
 )
 @Entity
 @SequenceGenerator(name = "DataPointSeq", sequenceName = "DataPointSeq")
-@Data
+@Getter
+@Setter
+@EqualsAndHashCode(callSuper = false)
 public class DataPoint {
 
     @Id
     @Column(name = "DATA_POINT_ID")
     @GeneratedValue(generator = "DataPointSeq", strategy = GenerationType.SEQUENCE)
+    @JsonIgnore
     private Long dataPointId;
 
     @Column(name = "AC_NAME")
@@ -34,17 +43,22 @@ public class DataPoint {
     @Column(name = "BUS_DATE")
     private LocalDate date;
 
-    @OneToMany(mappedBy = "dataPoint", cascade = ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "dataPoint", cascade = ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    @Fetch(FetchMode.SUBSELECT)
+    @Where(clause = "METRIC_TYPE='INCOME'")
     private List<IncomeItemMetric> incomes;
 
-    @OneToMany(mappedBy = "dataPoint", cascade = ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "dataPoint", cascade = ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    @Fetch(FetchMode.SUBSELECT)
+    @Where(clause = "METRIC_TYPE='EXPENSE'")
     private List<ExpenseItemMetric> expenses;
 
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "ST_DATA_POINT_STAT")
     @MapKeyColumn(name = "STAT_METRIC")
     @Column(name = "VAL")
     @MapKeyEnumerated(EnumType.STRING)
+    @Fetch(FetchMode.SUBSELECT)
     private Map<StatisticMetric, BigDecimal> statistics;
 
 }

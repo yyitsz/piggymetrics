@@ -4,6 +4,8 @@ server:
   port: 7000
 
 feign:
+  circuitbreaker:
+    enabled: true
   client:
     config:
       rates-client:
@@ -12,4 +14,4 @@ feign:
         loggerLevel: full
 
 rates:
-  url: https://api.exchangeratesapi.io
+  url: https://api2.exchangeratesapi.io
