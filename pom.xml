@@ -27,6 +27,11 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
+            <dependency>
+                <groupId>com.yyitsz.piggymetrics2</groupId>
+                <artifactId>common</artifactId>
+                <version>${project.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
     <modules>
@@ -35,5 +40,6 @@
         <module>account-service</module>
         <module>gateway</module>
         <module>statistics-service</module>
+        <module>common</module>
     </modules>
 </project>

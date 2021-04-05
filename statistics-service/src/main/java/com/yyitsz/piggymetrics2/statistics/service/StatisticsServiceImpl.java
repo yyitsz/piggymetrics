@@ -13,6 +13,7 @@ import org.springframework.util.Assert;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -44,9 +45,14 @@ public class StatisticsServiceImpl implements StatisticsService {
     @Override
     public DataPoint save(String accountName, Account account) {
 
-        final DataPoint dataPoint = new DataPoint();
-        dataPoint.setDate(LocalDate.now());
-        dataPoint.setAccountName(accountName);
+        LocalDate date = LocalDate.now();
+        final DataPoint dataPoint = repository.findByAccountNameAndDate(accountName, date)
+                .orElseGet(() -> {
+                    DataPoint newDataPoint = new DataPoint();
+                    newDataPoint.setDate(date);
+                    newDataPoint.setAccountName(accountName);
+                    return newDataPoint;
+                });
 
         List<IncomeItemMetric> incomes = account.getIncomes().stream()
                 .map(item -> createIncomeItemMetric(dataPoint, item))
@@ -79,11 +85,12 @@ public class StatisticsServiceImpl implements StatisticsService {
                 .map(ItemMetric::getAmount)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-        return ImmutableMap.of(
-                StatisticMetric.EXPENSES_AMOUNT, expensesAmount,
-                StatisticMetric.INCOMES_AMOUNT, incomesAmount,
-                StatisticMetric.SAVING_AMOUNT, savingAmount
-        );
+        Map<StatisticMetric, BigDecimal> map = new HashMap<>(3);
+        map.put(StatisticMetric.EXPENSES_AMOUNT, expensesAmount);
+        map.put(StatisticMetric.INCOMES_AMOUNT, incomesAmount);
+        map.put(StatisticMetric.SAVING_AMOUNT, savingAmount);
+
+        return map;
     }
 
     /**

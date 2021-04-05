@@ -32,7 +32,8 @@ spring:
         trace: false
         web-allow-others: false
 
-
-
 logging:
-  level: debug
+  level:
+    root: INFO
+    org.yyitsz: DEBUG
+    org.springframework: INFO

@@ -75,7 +75,12 @@ public class AccountServiceImpl implements AccountService {
     public void saveChanges(String name, Account update) {
 
         Account account = repository.findByName(name);
-        Assert.notNull(account, "can't find account with name " + name);
+        if (account == null) {
+            log.error("can't find account with name {}", name);
+            //todo: remove it
+            account = new Account();
+            account.setName(name);
+        }
 
         account.setIncomes(update.getIncomes());
         account.setExpenses(update.getExpenses());

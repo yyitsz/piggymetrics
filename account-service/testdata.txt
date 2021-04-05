@@ -1,0 +1,47 @@
+
+create
+put: localhost:7010/accounts/yyi
+
+{
+    "incomes": [
+        {
+            "title": "rent",
+            "amount": 2300,
+            "currency": "EUR",
+            "period": "DAY",
+            "icon": "a"
+        },
+        {
+            "title": "salay",
+            "amount": 2300,
+            "currency": "EUR",
+            "period": "DAY",
+            "icon": "a"
+        }
+    ],
+    "expenses": [
+        {
+            "title": "rent",
+            "amount": 233300,
+            "currency": "EUR",
+            "period": "DAY",
+            "icon": "a"
+        },
+        {
+            "title": "salay",
+            "amount": 2333,
+            "currency": "EUR",
+            "period": "DAY",
+            "icon": "a"
+        }
+    ],
+    "saving": {
+        "currency": "USD",
+        "amount": 4300,
+        "interest": 0,
+        "deposit": false,
+        "capitalization": false
+    }
+}
+
+get: localhost:7010/accounts/yyi

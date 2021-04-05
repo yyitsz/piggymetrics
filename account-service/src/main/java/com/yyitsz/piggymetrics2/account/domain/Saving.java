@@ -1,62 +1,37 @@
 package com.yyitsz.piggymetrics2.account.domain;
 
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 
+
+@Embeddable
+@Getter
+@Setter
+@EqualsAndHashCode
 public class Saving {
 
 	@NotNull
+	@Column(name="SAVING_AMT")
 	private BigDecimal amount;
 
 	@NotNull
+	@Column(name="SAVING_CCY")
 	private Currency currency;
 
 	@NotNull
+	@Column(name="SAVING_INT")
 	private BigDecimal interest;
 
 	@NotNull
+	@Column(name="IS_DEPOSIT")
 	private Boolean deposit;
 
 	@NotNull
+	@Column(name="IS_CAPITAL")
 	private Boolean capitalization;
-
-	public BigDecimal getAmount() {
-		return amount;
-	}
-
-	public void setAmount(BigDecimal amount) {
-		this.amount = amount;
-	}
-
-	public Currency getCurrency() {
-		return currency;
-	}
-
-	public void setCurrency(Currency currency) {
-		this.currency = currency;
-	}
-
-	public BigDecimal getInterest() {
-		return interest;
-	}
-
-	public void setInterest(BigDecimal interest) {
-		this.interest = interest;
-	}
-
-	public Boolean getDeposit() {
-		return deposit;
-	}
-
-	public void setDeposit(Boolean deposit) {
-		this.deposit = deposit;
-	}
-
-	public Boolean getCapitalization() {
-		return capitalization;
-	}
-
-	public void setCapitalization(Boolean capitalization) {
-		this.capitalization = capitalization;
-	}
 }

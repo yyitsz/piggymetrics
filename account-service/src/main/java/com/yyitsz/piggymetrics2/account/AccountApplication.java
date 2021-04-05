@@ -21,11 +21,4 @@ public class AccountApplication {
         SpringApplication.run(AccountApplication.class, args);
     }
 
-    @Bean
-    public Customizer<Resilience4JCircuitBreakerFactory> defaultCustomizer() {
-        return factory -> factory.configureDefault(id -> new Resilience4JConfigBuilder(id)
-                .timeLimiterConfig(TimeLimiterConfig.custom().timeoutDuration(Duration.ofSeconds(4)).build())
-                .circuitBreakerConfig(CircuitBreakerConfig.ofDefaults())
-                .build());
-    }
 }

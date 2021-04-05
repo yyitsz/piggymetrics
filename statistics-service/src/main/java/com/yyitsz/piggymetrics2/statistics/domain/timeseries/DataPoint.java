@@ -1,6 +1,10 @@
 package com.yyitsz.piggymetrics2.statistics.domain.timeseries;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.yyitsz.piggymetrics2.common.domain.BaseModel;
+import com.yyitsz.piggymetrics2.common.domain.Key;
+import com.yyitsz.piggymetrics2.common.domain.ModelUtils;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -29,7 +33,8 @@ import static javax.persistence.CascadeType.ALL;
 @Getter
 @Setter
 @EqualsAndHashCode(callSuper = false)
-public class DataPoint {
+@JsonIgnoreProperties(value = {"createTime", "updateTime", "version", "createBy", "updatedBy"})
+public class DataPoint extends BaseModel {
 
     @Id
     @Column(name = "DATA_POINT_ID")
@@ -45,12 +50,12 @@ public class DataPoint {
 
     @OneToMany(mappedBy = "dataPoint", cascade = ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     @Fetch(FetchMode.SUBSELECT)
-    @Where(clause = "METRIC_TYPE='INCOME'")
+    @Where(clause = "ITEM_TYPE='INCOME'")
     private List<IncomeItemMetric> incomes;
 
     @OneToMany(mappedBy = "dataPoint", cascade = ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     @Fetch(FetchMode.SUBSELECT)
-    @Where(clause = "METRIC_TYPE='EXPENSE'")
+    @Where(clause = "ITEM_TYPE='EXPENSE'")
     private List<ExpenseItemMetric> expenses;
 
     @ElementCollection(fetch = FetchType.EAGER)
@@ -61,4 +66,47 @@ public class DataPoint {
     @Fetch(FetchMode.SUBSELECT)
     private Map<StatisticMetric, BigDecimal> statistics;
 
+    public void setIncomes(List<IncomeItemMetric> incomes) {
+        if (this.incomes == null) {
+            this.incomes = incomes;
+            initDataPoint(this.incomes);
+        } else {
+            ModelUtils.copy(incomes, this.incomes,
+                    item -> {
+                        return new Key(item.getTitle());
+                    },
+                    item -> {
+                        IncomeItemMetric newItem = new IncomeItemMetric();
+                        newItem.setDataPoint(this);
+                        newItem.setTitle(item.getTitle());
+                        return newItem;
+                    },
+                    "versionNo", "createTime",
+                    "updateTime", "version", "createBy", "updatedBy", "itemMetricId", "dataPoint", "title");
+        }
+    }
+
+    public void setExpenses(List<ExpenseItemMetric> expenses) {
+        if (this.expenses == null) {
+            this.expenses = expenses;
+            initDataPoint(this.expenses);
+        } else {
+            ModelUtils.copy(expenses, this.expenses,
+                    item -> {
+                        return new Key(item.getTitle());
+                    },
+                    item -> {
+                        ExpenseItemMetric newItem = new ExpenseItemMetric();
+                        newItem.setDataPoint(this);
+                        newItem.setTitle(item.getTitle());
+                        return newItem;
+                    },
+                    "versionNo", "createTime",
+                    "updateTime", "version", "createBy", "updatedBy", "itemMetricId", "dataPoint", "title");
+        }
+    }
+
+    private <T extends ItemMetric> void initDataPoint(List<T> items) {
+        items.forEach(item -> item.setDataPoint(this));
+    }
 }

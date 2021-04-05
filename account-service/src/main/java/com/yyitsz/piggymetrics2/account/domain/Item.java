@@ -1,65 +1,56 @@
 package com.yyitsz.piggymetrics2.account.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.yyitsz.piggymetrics2.common.domain.BaseModel;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.validator.constraints.Length;
 
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 
-public class Item {
+@MappedSuperclass
+@Getter
+@Setter
+@EqualsAndHashCode(callSuper = false)
+public class Item extends BaseModel {
 
-	@NotNull
-	@Length(min = 1, max = 20)
-	private String title;
 
-	@NotNull
-	private BigDecimal amount;
+    @Id
+    @GeneratedValue(generator = "ItemSeq", strategy = GenerationType.SEQUENCE)
+    @SequenceGenerator(name = "ItemSeq", sequenceName = "ItemSeq")
+    @Column(name = "ITEM_ID")
+    @JsonIgnore
+    private Long itemId;
 
-	@NotNull
-	private Currency currency;
+    @ManyToOne
+    @JoinColumn(name = "AC_NAME")
+    @JsonIgnore
+    private Account account;
 
-	@NotNull
-	private TimePeriod period;
+    @NotNull
+    @Length(min = 1, max = 20)
+    @Column(name = "TITLE")
+    private String title;
 
-	@NotNull
-	private String icon;
+    @NotNull
+    @Column(name = "AMT")
+    private BigDecimal amount;
 
-	public String getTitle() {
-		return title;
-	}
+    @NotNull
+    @Column(name = "CCY")
+    private Currency currency;
 
-	public void setTitle(String title) {
-		this.title = title;
-	}
+    @NotNull
+    @Column(name = "PERIOD")
+    @Enumerated(EnumType.STRING)
+    private TimePeriod period;
 
-	public BigDecimal getAmount() {
-		return amount;
-	}
+    @NotNull
+    @Column(name = "ICON")
+    private String icon;
 
-	public void setAmount(BigDecimal amount) {
-		this.amount = amount;
-	}
 
-	public Currency getCurrency() {
-		return currency;
-	}
-
-	public void setCurrency(Currency currency) {
-		this.currency = currency;
-	}
-
-	public TimePeriod getPeriod() {
-		return period;
-	}
-
-	public void setPeriod(TimePeriod period) {
-		this.period = period;
-	}
-
-	public String getIcon() {
-		return icon;
-	}
-
-	public void setIcon(String icon) {
-		this.icon = icon;
-	}
 }

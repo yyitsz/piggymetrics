@@ -1,82 +1,104 @@
 package com.yyitsz.piggymetrics2.account.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.yyitsz.piggymetrics2.common.domain.BaseModel;
+import com.yyitsz.piggymetrics2.common.domain.Key;
+import com.yyitsz.piggymetrics2.common.domain.ModelUtils;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
+import org.hibernate.annotations.Where;
 import org.hibernate.validator.constraints.Length;
-import org.springframework.data.annotation.Id;
-//import org.springframework.data.mongodb.core.mapping.Document;
 
+import javax.persistence.*;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
 import java.util.List;
 
+import static javax.persistence.CascadeType.ALL;
+
 //@Document(collection = "accounts")
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Account {
+@Entity
+@Table(name = "AS_AC")
+@Getter
+@Setter
+@EqualsAndHashCode
+public class Account extends BaseModel {
 
     @Id
+    @Column(name = "AC_NAME")
     private String name;
 
+    @Column(name = "LAST_SEEN")
     private Date lastSeen;
 
     @Valid
-    private List<Item> incomes;
+    @OneToMany(mappedBy = "account", cascade = ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    @Fetch(FetchMode.SUBSELECT)
+    @Where(clause = "ITEM_TYPE='INCOME'")
+    private List<IncomeItem> incomes;
+
 
     @Valid
-    private List<Item> expenses;
+    @OneToMany(mappedBy = "account", cascade = ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    @Fetch(FetchMode.SUBSELECT)
+    @Where(clause = "ITEM_TYPE='EXPENSE'")
+    private List<ExpenseItem> expenses;
 
     @Valid
     @NotNull
+    @Embedded
     private Saving saving;
 
     @Length(min = 0, max = 20_000)
+    @Column(name = "NOTE")
     private String note;
 
-    public String getName() {
-        return name;
+    public void setIncomes(List<IncomeItem> incomes) {
+        if (this.incomes == null) {
+            this.incomes = incomes;
+            initAccount(this.incomes);
+        } else {
+            ModelUtils.copy(incomes, this.incomes,
+                    item -> {
+                        return new Key(item.getTitle());
+                    },
+                    item -> {
+                        IncomeItem newItem = new IncomeItem();
+                        newItem.setAccount(this);
+                        newItem.setTitle(item.getTitle());
+                        return newItem;
+                    },
+                    "versionNo", "createTime",
+                    "updateTime", "version", "createBy", "updatedBy", "itemId", "account", "title");
+        }
     }
 
-    public void setName(String name) {
-        this.name = name;
+    private <T extends Item> void initAccount(List<T> items) {
+        items.forEach(item -> item.setAccount(this));
     }
 
-    public Date getLastSeen() {
-        return lastSeen;
-    }
-
-    public void setLastSeen(Date lastSeen) {
-        this.lastSeen = lastSeen;
-    }
-
-    public List<Item> getIncomes() {
-        return incomes;
-    }
-
-    public void setIncomes(List<Item> incomes) {
-        this.incomes = incomes;
-    }
-
-    public List<Item> getExpenses() {
-        return expenses;
-    }
-
-    public void setExpenses(List<Item> expenses) {
-        this.expenses = expenses;
-    }
-
-    public Saving getSaving() {
-        return saving;
-    }
-
-    public void setSaving(Saving saving) {
-        this.saving = saving;
-    }
-
-    public String getNote() {
-        return note;
-    }
-
-    public void setNote(String note) {
-        this.note = note;
+    public void setExpenses(List<ExpenseItem> expenses) {
+        if (this.expenses == null) {
+            this.expenses = expenses;
+            initAccount(this.expenses);
+        } else {
+            ModelUtils.copy(expenses, this.expenses,
+                    item -> {
+                        return new Key(item.getTitle());
+                    },
+                    item -> {
+                        ExpenseItem newItem = new ExpenseItem();
+                        newItem.setAccount(this);
+                        newItem.setTitle(item.getTitle());
+                        return newItem;
+                    },
+                    "versionNo", "createTime",
+                    "updateTime", "version", "createBy", "updatedBy", "itemId", "account", "title");
+        }
     }
 }

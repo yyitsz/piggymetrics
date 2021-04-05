@@ -1,6 +1,8 @@
 package com.yyitsz.piggymetrics2.statistics.domain.timeseries;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import com.yyitsz.piggymetrics2.common.domain.BaseModel;
 import com.yyitsz.piggymetrics2.statistics.domain.Currency;
 import com.yyitsz.piggymetrics2.statistics.domain.TimePeriod;
 import lombok.EqualsAndHashCode;
@@ -19,7 +21,7 @@ import java.math.BigDecimal;
 @Getter
 @Setter
 @EqualsAndHashCode(callSuper = false)
-public class ItemMetric {
+public class ItemMetric extends BaseModel {
 
     @Id
     @GeneratedValue(generator = "ItemMetricSeq", strategy = GenerationType.SEQUENCE)
