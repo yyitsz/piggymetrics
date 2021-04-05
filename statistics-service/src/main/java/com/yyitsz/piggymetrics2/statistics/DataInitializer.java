@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 
-@Component
+//@Component
 public class DataInitializer implements ApplicationContextAware, ApplicationListener<ApplicationReadyEvent> {
     ApplicationContext applicationContext;
 

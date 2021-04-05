@@ -1,17 +1,28 @@
 package com.yyitsz.piggymetrics2.statistics.domain.timeseries;
 
-import java.io.Serializable;
-import java.util.Date;
+import lombok.Data;
 
+import javax.persistence.Column;
+import javax.persistence.Embeddable;
+import java.io.Serializable;
+import java.time.LocalDate;
+
+@Embeddable
+@Data
 public class DataPointId implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
+	@Column
 	private String account;
 
-	private Date date;
+	@Column
+	private LocalDate date;
 
-	public DataPointId(String account, Date date) {
+	public DataPointId() {
+	}
+
+	public DataPointId(String account, LocalDate date) {
 		this.account = account;
 		this.date = date;
 	}
@@ -20,7 +31,7 @@ public class DataPointId implements Serializable {
 		return account;
 	}
 
-	public Date getDate() {
+	public LocalDate getDate() {
 		return date;
 	}
 
