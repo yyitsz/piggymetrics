@@ -3,7 +3,7 @@ package com.yyitsz.piggymetrics2.common.domain;
 import java.util.Arrays;
 
 public class Key {
-    private Object[] keyList = new Object[0];
+    private Object[] keyList;
 
     public Key(Object... keys) {
         keyList = keys;

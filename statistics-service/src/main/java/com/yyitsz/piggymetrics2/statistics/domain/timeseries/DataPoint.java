@@ -71,7 +71,7 @@ public class DataPoint extends BaseModel {
             this.incomes = incomes;
             initDataPoint(this.incomes);
         } else {
-            ModelUtils.copy(incomes, this.incomes,
+            ModelUtils.BASE_MODEL.copy(incomes, this.incomes,
                     item -> {
                         return new Key(item.getTitle());
                     },
@@ -80,9 +80,7 @@ public class DataPoint extends BaseModel {
                         newItem.setDataPoint(this);
                         newItem.setTitle(item.getTitle());
                         return newItem;
-                    },
-                    "versionNo", "createTime",
-                    "updateTime", "version", "createBy", "updatedBy", "itemMetricId", "dataPoint", "title");
+                    }, "itemMetricId", "dataPoint", "title");
         }
     }
 
@@ -91,7 +89,7 @@ public class DataPoint extends BaseModel {
             this.expenses = expenses;
             initDataPoint(this.expenses);
         } else {
-            ModelUtils.copy(expenses, this.expenses,
+            ModelUtils.BASE_MODEL.copy(expenses, this.expenses,
                     item -> {
                         return new Key(item.getTitle());
                     },
@@ -100,9 +98,7 @@ public class DataPoint extends BaseModel {
                         newItem.setDataPoint(this);
                         newItem.setTitle(item.getTitle());
                         return newItem;
-                    },
-                    "versionNo", "createTime",
-                    "updateTime", "version", "createBy", "updatedBy", "itemMetricId", "dataPoint", "title");
+                    }, "itemMetricId", "dataPoint", "title");
         }
     }
 

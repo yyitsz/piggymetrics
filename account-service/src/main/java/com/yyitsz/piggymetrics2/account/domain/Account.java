@@ -63,7 +63,7 @@ public class Account extends BaseModel {
             this.incomes = incomes;
             initAccount(this.incomes);
         } else {
-            ModelUtils.copy(incomes, this.incomes,
+            ModelUtils.BASE_MODEL.copy(incomes, this.incomes,
                     item -> {
                         return new Key(item.getTitle());
                     },
@@ -72,9 +72,7 @@ public class Account extends BaseModel {
                         newItem.setAccount(this);
                         newItem.setTitle(item.getTitle());
                         return newItem;
-                    },
-                    "versionNo", "createTime",
-                    "updateTime", "version", "createBy", "updatedBy", "itemId", "account", "title");
+                    }, "itemId", "account", "title");
         }
     }
 
@@ -87,7 +85,7 @@ public class Account extends BaseModel {
             this.expenses = expenses;
             initAccount(this.expenses);
         } else {
-            ModelUtils.copy(expenses, this.expenses,
+            ModelUtils.BASE_MODEL.copy(expenses, this.expenses,
                     item -> {
                         return new Key(item.getTitle());
                     },
@@ -96,9 +94,7 @@ public class Account extends BaseModel {
                         newItem.setAccount(this);
                         newItem.setTitle(item.getTitle());
                         return newItem;
-                    },
-                    "versionNo", "createTime",
-                    "updateTime", "version", "createBy", "updatedBy", "itemId", "account", "title");
+                    }, "itemId", "account", "title");
         }
     }
 }
