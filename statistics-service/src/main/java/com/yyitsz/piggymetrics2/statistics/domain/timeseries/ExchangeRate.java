@@ -31,4 +31,12 @@ public class ExchangeRate extends BaseModel {
     @Column(name = "RATE")
     private BigDecimal rate;
 
+    public ExchangeRate() {
+    }
+
+    public ExchangeRate(LocalDate date, Currency currency, BigDecimal rate) {
+        this.date = date;
+        this.currency = currency;
+        this.rate = rate;
+    }
 }
