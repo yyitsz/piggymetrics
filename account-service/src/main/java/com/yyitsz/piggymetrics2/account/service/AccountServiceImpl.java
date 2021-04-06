@@ -1,5 +1,6 @@
 package com.yyitsz.piggymetrics2.account.service;
 
+import com.yyitsz.piggymetrics2.account.client.AuthServiceClient;
 import com.yyitsz.piggymetrics2.account.client.StatisticsServiceClient;
 import com.yyitsz.piggymetrics2.account.domain.Account;
 import com.yyitsz.piggymetrics2.account.domain.Currency;
@@ -23,8 +24,8 @@ public class AccountServiceImpl implements AccountService {
     @Autowired
     private StatisticsServiceClient statisticsClient;
 
-    //@Autowired
-    //private AuthServiceClient authClient;
+    @Autowired
+    private AuthServiceClient authClient;
 
     @Autowired
     private AccountRepository repository;
@@ -47,7 +48,7 @@ public class AccountServiceImpl implements AccountService {
         Account existing = repository.findByName(user.getUsername());
         Assert.isNull(existing, "account already exists: " + user.getUsername());
 
-        //authClient.createUser(user);
+        authClient.createUser(user);
 
         Saving saving = new Saving();
         saving.setAmount(new BigDecimal(0));
