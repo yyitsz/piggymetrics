@@ -24,17 +24,17 @@ public class GatewayApplication {
         return new CustomGlobalFilter();
     }
 
-    @Bean
-    public Customizer<Resilience4JCircuitBreakerFactory> defaultCustomizer() {
-        return factory -> factory.configureDefault(id -> new Resilience4JConfigBuilder(id)
-                .timeLimiterConfig(TimeLimiterConfig.custom().timeoutDuration(Duration.ofSeconds(4)).build())
-                .circuitBreakerConfig(CircuitBreakerConfig.ofDefaults())
-                .build());
-    }
-
-    @Bean
-    public Customizer<Resilience4JCircuitBreakerFactory> slowCustomizer() {
-        return factory -> factory.configure(builder -> builder.circuitBreakerConfig(CircuitBreakerConfig.ofDefaults())
-                .timeLimiterConfig(TimeLimiterConfig.custom().timeoutDuration(Duration.ofSeconds(2)).build()), "slow");
-    }
+//    @Bean
+//    public Customizer<Resilience4JCircuitBreakerFactory> defaultCustomizer() {
+//        return factory -> factory.configureDefault(id -> new Resilience4JConfigBuilder(id)
+//                .timeLimiterConfig(TimeLimiterConfig.custom().timeoutDuration(Duration.ofSeconds(4)).build())
+//                .circuitBreakerConfig(CircuitBreakerConfig.ofDefaults())
+//                .build());
+//    }
+//
+//    @Bean
+//    public Customizer<Resilience4JCircuitBreakerFactory> slowCustomizer() {
+//        return factory -> factory.configure(builder -> builder.circuitBreakerConfig(CircuitBreakerConfig.ofDefaults())
+//                .timeLimiterConfig(TimeLimiterConfig.custom().timeoutDuration(Duration.ofSeconds(2)).build()), "slow");
+//    }
 }

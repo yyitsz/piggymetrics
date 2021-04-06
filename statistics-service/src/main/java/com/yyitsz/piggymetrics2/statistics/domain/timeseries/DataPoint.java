@@ -8,11 +8,12 @@ import com.yyitsz.piggymetrics2.common.domain.ModelUtils;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
-import org.hibernate.annotations.Where;
+import org.hibernate.annotations.*;
 
 import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
@@ -34,6 +35,7 @@ import static javax.persistence.CascadeType.ALL;
 @Setter
 @EqualsAndHashCode(callSuper = false)
 @JsonIgnoreProperties(value = {"createTime", "updateTime", "version", "createBy", "updatedBy"})
+//@NaturalIdCache
 public class DataPoint extends BaseModel {
 
     @Id
@@ -43,9 +45,11 @@ public class DataPoint extends BaseModel {
     private Long dataPointId;
 
     @Column(name = "AC_NAME")
+    @NaturalId
     private String accountName;
 
     @Column(name = "BUS_DATE")
+    @NaturalId
     private LocalDate date;
 
     @OneToMany(mappedBy = "dataPoint", cascade = ALL, orphanRemoval = true, fetch = FetchType.EAGER)
@@ -59,7 +63,7 @@ public class DataPoint extends BaseModel {
     private List<ExpenseItemMetric> expenses;
 
     @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name = "ST_DATA_POINT_STAT")
+    @CollectionTable(name = "ST_DATA_POINT_STAT", joinColumns = @JoinColumn(name = "DATA_POINT_ID"))
     @MapKeyColumn(name = "STAT_METRIC")
     @Column(name = "VAL")
     @MapKeyEnumerated(EnumType.STRING)

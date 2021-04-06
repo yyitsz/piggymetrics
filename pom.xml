@@ -41,5 +41,6 @@
         <module>gateway</module>
         <module>statistics-service</module>
         <module>common</module>
+        <module>notification-service</module>
     </modules>
 </project>

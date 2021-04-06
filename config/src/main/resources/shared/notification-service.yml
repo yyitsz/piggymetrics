@@ -1,0 +1,58 @@
+#security:
+#  oauth2:
+#    client:
+#      clientId: notification-service
+#      clientSecret: ${NOTIFICATION_SERVICE_PASSWORD:abc123}
+#      #accessTokenUri: http://auth-service:5000/uaa/oauth/token
+#      accessTokenUri: http://10.100.53.106:5000/uaa/oauth/token
+#      grant-type: client_credentials
+#      scope: server
+
+server:
+  servlet:
+    context-path: /notifications
+  port: 7080
+
+remind:
+  cron: 0 0 0 * * *
+  email:
+    text: "Hey, {0}! We''ve missed you here on PiggyMetrics. It''s time to check your budget statistics.\r\n\r\nCheers,\r\nPiggyMetrics team"
+    subject: PiggyMetrics reminder
+
+backup:
+  cron: 0 0 12 * * *
+  email:
+    text: "Howdy, {0}. Your account backup is ready.\r\n\r\nCheers,\r\nPiggyMetrics team"
+    subject: PiggyMetrics account backup
+    attachment: backup.json
+
+spring:
+  datasource:
+    url: jdbc:h2:mem:h2test;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    platform: h2
+    username: sa
+    password:
+    driverClassName: org.h2.Driver
+    schema:
+    data:
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        show_sql: true
+        use_sql_comments: false
+        format_sql: true
+  h2:
+    console:
+      enabled: true
+      path: /console
+      settings:
+        trace: false
+        web-allow-others: false
+  mail:
+    host: 172.30.201.74
+    port: 25
+    smtp:
+      auth: false

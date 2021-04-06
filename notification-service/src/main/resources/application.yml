@@ -1,9 +1,8 @@
 spring:
   application:
-    name: statistics-service
+    name: notification-service
   cloud:
   #    config:
   #      uri: ${CONFIG_SERVER_URL:http://localhost:8888}
   config:
     import: optional:configserver:http://localhost:8888
-
