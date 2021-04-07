@@ -16,18 +16,26 @@ public interface RecipientRepository extends JpaRepository<Recipient, String> {
 
     //	@Query("{ $and: [ {'scheduledNotifications.BACKUP.active': true }, { $where: 'this.scheduledNotifications.BACKUP.lastNotified < " +
 //			"new Date(new Date().setDate(new Date().getDate() - this.scheduledNotifications.BACKUP.frequency ))' }] }")
-    @Query("Select distinct r from Recipient r inner join r.scheduledNotifications n " +
-            " where key(n) = 'BACKUP' " +
-            "  and n.active = true " +
-            "  and n.lastNotified < (sysdate - n.frequency)")
+//    @Query("Select distinct r from Recipient r inner join r.scheduledNotifications n " +
+//            " where key(n) = 'BACKUP' " +
+//            "  and n.active = true " +
+//            "  and n.lastNotified < (sysdate - n.frequency)")
+    @Query("select r from Recipient r  " +
+            " where exists(select 1 " +
+            "    from r.scheduledNotifications n " +
+            "    where key(n) = 'BACKUP' " +
+            "      and n.active = true " +
+            "      and n.lastNotified < (SYSDATE - n.frequency) )")
     List<Recipient> findReadyForBackup();
 
     //	@Query("{ $and: [ {'scheduledNotifications.REMIND.active': true }, { $where: 'this.scheduledNotifications.REMIND.lastNotified < " +
 //			"new Date(new Date().setDate(new Date().getDate() - this.scheduledNotifications.REMIND.frequency ))' }] }")
-    @Query("Select distinct r from Recipient r inner join r.scheduledNotifications n " +
-            " where key(n) = 'REMIND' " +
-            "  and n.active = true " +
-            "  and n.lastNotified < (sysdate - n.frequency)")
+    @Query("select r from Recipient r  " +
+            " where exists(select 1 " +
+            "    from r.scheduledNotifications n " +
+            "    where key(n) = 'REMIND' " +
+            "      and n.active = true " +
+            "      and n.lastNotified < (SYSDATE - n.frequency) )")
     List<Recipient> findReadyForRemind();
 
 }
