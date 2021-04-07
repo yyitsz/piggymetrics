@@ -1,21 +1,19 @@
 package com.yyitsz.piggymetrics2.statistics.domain.timeseries;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.yyitsz.piggymetrics2.common.domain.BaseModel;
 import com.yyitsz.piggymetrics2.common.domain.Key;
 import com.yyitsz.piggymetrics2.common.domain.ModelUtils;
+import com.yyitsz.piggymetrics2.statistics.domain.Currency;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.annotations.*;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
+import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.Table;
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
@@ -26,11 +24,12 @@ import static javax.persistence.CascadeType.ALL;
  * current account state
  */
 //@Document(collection = "datapoints")
-@Table(name = "ST_DATA_POINT",
-        uniqueConstraints = @UniqueConstraint(name = "ST_DATA_POINT_UK1", columnNames = {"AC_NAME", "BUS_DATE"})
+@Table(name = "ST_DATA_POINT"
+        //,uniqueConstraints = @UniqueConstraint(name = "ST_DATA_POINT_UK1", columnNames = {"AC_NAME", "BUS_DATE"})
 )
+
 @Entity
-@SequenceGenerator(name = "DataPointSeq", sequenceName = "DataPointSeq")
+//@SequenceGenerator(name = "DataPointSeq", sequenceName = "DataPointSeq")
 @Getter
 @Setter
 @EqualsAndHashCode(callSuper = false)
@@ -38,19 +37,14 @@ import static javax.persistence.CascadeType.ALL;
 //@NaturalIdCache
 public class DataPoint extends BaseModel {
 
-    @Id
-    @Column(name = "DATA_POINT_ID")
-    @GeneratedValue(generator = "DataPointSeq", strategy = GenerationType.SEQUENCE)
-    @JsonIgnore
-    private Long dataPointId;
+//    @Id
+//    @Column(name = "DATA_POINT_ID")
+//    @GeneratedValue(generator = "DataPointSeq", strategy = GenerationType.SEQUENCE)
+//    @JsonIgnore
+//    private Long dataPointId;
 
-    @Column(name = "AC_NAME")
-    @NaturalId
-    private String accountName;
-
-    @Column(name = "BUS_DATE")
-    @NaturalId
-    private LocalDate date;
+    @EmbeddedId
+    private DataPointId id;
 
     @OneToMany(mappedBy = "dataPoint", cascade = ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     @Fetch(FetchMode.SUBSELECT)
@@ -63,12 +57,22 @@ public class DataPoint extends BaseModel {
     private List<ExpenseItemMetric> expenses;
 
     @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name = "ST_DATA_POINT_STAT", joinColumns = @JoinColumn(name = "DATA_POINT_ID"))
+    @CollectionTable(name = "ST_DATA_POINT_STAT",
+            joinColumns = {@JoinColumn(name = "AC_NAME"), @JoinColumn(name = "BUS_DATE")})
     @MapKeyColumn(name = "STAT_METRIC")
     @Column(name = "VAL")
     @MapKeyEnumerated(EnumType.STRING)
     @Fetch(FetchMode.SUBSELECT)
     private Map<StatisticMetric, BigDecimal> statistics;
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "ST_DATA_POINT_CCY_RATE",
+            joinColumns = {@JoinColumn(name = "AC_NAME"), @JoinColumn(name = "BUS_DATE")})
+    @MapKeyColumn(name = "CCY")
+    @Column(name = "RATE")
+    @MapKeyEnumerated(EnumType.STRING)
+    @Fetch(FetchMode.SUBSELECT)
+    private Map<Currency, BigDecimal> rates;
 
     public void setIncomes(List<IncomeItemMetric> incomes) {
         if (this.incomes == null) {

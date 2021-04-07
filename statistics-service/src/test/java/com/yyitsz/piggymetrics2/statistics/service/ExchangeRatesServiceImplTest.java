@@ -1,11 +1,10 @@
 package com.yyitsz.piggymetrics2.statistics.service;
 
 import com.google.common.collect.ImmutableMap;
+
 import com.yyitsz.piggymetrics2.statistics.client.ExchangeRatesClient;
 import com.yyitsz.piggymetrics2.statistics.domain.Currency;
 import com.yyitsz.piggymetrics2.statistics.domain.ExchangeRatesContainer;
-import com.yyitsz.piggymetrics2.statistics.domain.timeseries.ExchangeRate;
-import com.yyitsz.piggymetrics2.statistics.repository.ExchangeRateRepository;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -13,8 +12,6 @@ import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -29,8 +26,6 @@ public class ExchangeRatesServiceImplTest {
     @Mock
     private ExchangeRatesClient client;
 
-    @Mock
-    private ExchangeRateRepository exchangeRateRepository;
 
     @Test
     public void shouldReturnCurrentRatesWhenContainerIsEmptySoFar() {
@@ -54,7 +49,6 @@ public class ExchangeRatesServiceImplTest {
     @Test
     public void shouldNotRequestRatesWhenTodaysContainerAlreadyExists() {
 
-        LocalDate date = LocalDate.now();
         ExchangeRatesContainer container = new ExchangeRatesContainer();
         container.setRates(ImmutableMap.of(
                 Currency.EUR.name(), new BigDecimal("0.8"),
@@ -66,11 +60,6 @@ public class ExchangeRatesServiceImplTest {
         // initialize container
         ratesService.getCurrentRates();
 
-        ArrayList<ExchangeRate> exchangeRates = new ArrayList<>();
-        exchangeRates.add(new ExchangeRate(date, Currency.EUR, new BigDecimal("0.8")));
-        exchangeRates.add(new ExchangeRate(date, Currency.RUB, new BigDecimal("80")));
-
-        when(exchangeRateRepository.findByDate(eq(date))).thenReturn(exchangeRates);
         // use existing container
         ratesService.getCurrentRates();
 
@@ -89,11 +78,11 @@ public class ExchangeRatesServiceImplTest {
         when(client.getRates(Currency.getBase())).thenReturn(container);
 
         final BigDecimal amount = new BigDecimal(100);
-        final BigDecimal expectedConvertionResult = new BigDecimal("1.25");
+        final BigDecimal expectedConversionResult = new BigDecimal("1.25");
 
         BigDecimal result = ratesService.convert(Currency.RUB, Currency.USD, amount);
 
-        assertTrue(expectedConvertionResult.compareTo(result) == 0);
+        assertTrue(expectedConversionResult.compareTo(result) == 0);
     }
 
     @Test

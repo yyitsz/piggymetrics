@@ -20,14 +20,14 @@ import java.math.BigDecimal;
 @DiscriminatorValue("EXPENSE")
 @Table(name = "ST_ITEM_METRIC",
         uniqueConstraints = @UniqueConstraint(name = "ST_ITEM_METRIC_UK1",
-                columnNames = {"DATA_POINT_ID", "ITEM_TYPE", "TITLE"})
+                columnNames = {"AC_NAME", "BUS_DATE", "ITEM_TYPE", "TITLE"})
 )
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "ITEM_TYPE", discriminatorType = DiscriminatorType.STRING, length = 30)
 @Getter
 @Setter
 @EqualsAndHashCode(callSuper = true)
-@JsonIgnoreProperties(value = { "createTime","updateTime", "version", "createBy", "updatedBy"})
+@JsonIgnoreProperties(value = {"createTime", "updateTime", "version", "createBy", "updatedBy"})
 public class ExpenseItemMetric extends ItemMetric {
     public ExpenseItemMetric() {
     }

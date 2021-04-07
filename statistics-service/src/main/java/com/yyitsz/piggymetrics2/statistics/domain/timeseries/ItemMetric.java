@@ -1,7 +1,6 @@
 package com.yyitsz.piggymetrics2.statistics.domain.timeseries;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import com.yyitsz.piggymetrics2.common.domain.BaseModel;
 import com.yyitsz.piggymetrics2.statistics.domain.Currency;
 import com.yyitsz.piggymetrics2.statistics.domain.TimePeriod;
@@ -31,7 +30,8 @@ public class ItemMetric extends BaseModel {
     private Long itemMetricId;
 
     @ManyToOne
-    @JoinColumn(name = "DATA_POINT_ID")
+    @JoinColumn(name = "AC_NAME")
+    @JoinColumn(name = "BUS_DATE")
     @JsonIgnore
     private DataPoint dataPoint;
 

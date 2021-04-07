@@ -5,6 +5,7 @@ import com.google.common.collect.ImmutableList;
 import com.sun.security.auth.UserPrincipal;
 import com.yyitsz.piggymetrics2.statistics.domain.*;
 import com.yyitsz.piggymetrics2.statistics.domain.timeseries.DataPoint;
+import com.yyitsz.piggymetrics2.statistics.domain.timeseries.DataPointId;
 import com.yyitsz.piggymetrics2.statistics.service.StatisticsService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -54,14 +55,14 @@ public class StatisticsControllerTest {
     public void shouldGetStatisticsByAccountName() throws Exception {
 
         final DataPoint dataPoint = new DataPoint();
-        dataPoint.setAccountName("test");
-        dataPoint.setDate(LocalDate.now());
+        DataPointId dataPointId = new DataPointId("test", LocalDate.now());
+        dataPoint.setId(dataPointId);
 
-        when(statisticsService.findByAccountName(dataPoint.getAccountName()))
+        when(statisticsService.findByAccountName(dataPoint.getId().getAccount()))
                 .thenReturn(ImmutableList.of(dataPoint));
 
-        mockMvc.perform(get("/test").principal(new UserPrincipal(dataPoint.getAccountName())).accept(MediaType.APPLICATION_JSON_VALUE))
-                .andExpect(jsonPath("$[0].accountName").value(dataPoint.getAccountName()))
+        mockMvc.perform(get("/test").principal(new UserPrincipal(dataPoint.getId().getAccount())).accept(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(jsonPath("$[0].id.account").value(dataPoint.getId().getAccount()))
                 .andExpect(status().isOk());
     }
 
@@ -69,14 +70,14 @@ public class StatisticsControllerTest {
     public void shouldGetCurrentAccountStatistics() throws Exception {
 
         final DataPoint dataPoint = new DataPoint();
-        dataPoint.setAccountName("test");
-        dataPoint.setDate(LocalDate.now());
+        DataPointId dataPointId = new DataPointId("test", LocalDate.now());
+        dataPoint.setId(dataPointId);
 
-        when(statisticsService.findByAccountName(dataPoint.getAccountName()))
+        when(statisticsService.findByAccountName(dataPoint.getId().getAccount()))
                 .thenReturn(ImmutableList.of(dataPoint));
 
-        mockMvc.perform(get("/current").principal(new UserPrincipal(dataPoint.getAccountName())).accept(MediaType.APPLICATION_JSON_VALUE))
-                .andExpect(jsonPath("$[0].accountName").value(dataPoint.getAccountName()))
+        mockMvc.perform(get("/current").principal(new UserPrincipal(dataPoint.getId().getAccount())).accept(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(jsonPath("$[0].id.account").value(dataPoint.getId().getAccount()))
                 .andExpect(status().isOk());
     }
 

@@ -16,8 +16,6 @@ import org.mockito.quality.Strictness;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
-import java.time.ZoneId;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -41,7 +39,7 @@ public class StatisticsServiceImplTest {
     @Test
     public void shouldFindDataPointListByAccountName() {
         final List<DataPoint> list = ImmutableList.of(new DataPoint());
-        when(repository.findByAccountName("test")).thenReturn(list);
+        when(repository.findByIdAccount("test")).thenReturn(list);
 
         List<DataPoint> result = statisticsService.findByAccountName("test");
         assertEquals(list, result);
@@ -126,12 +124,12 @@ public class StatisticsServiceImplTest {
         final BigDecimal expectedNormalizedVacationAmount = new BigDecimal("11.6361");
         final BigDecimal expectedNormalizedGroceryAmount = new BigDecimal("6.25");
 
-        assertEquals(dataPoint.getAccountName(), "test");
-        assertEquals(dataPoint.getDate(), LocalDate.now());
+        assertEquals(dataPoint.getId().getAccount(), "test");
+        assertEquals(dataPoint.getId().getDate(), LocalDate.now());
 
-        assertTrue(expectedExpensesAmount.compareTo(dataPoint.getStatistics().get(StatisticMetric.EXPENSES_AMOUNT)) == 0);
-        assertTrue(expectedIncomesAmount.compareTo(dataPoint.getStatistics().get(StatisticMetric.INCOMES_AMOUNT)) == 0);
-        assertTrue(expectedSavingAmount.compareTo(dataPoint.getStatistics().get(StatisticMetric.SAVING_AMOUNT)) == 0);
+        assertEquals(expectedExpensesAmount.compareTo(dataPoint.getStatistics().get(StatisticMetric.EXPENSES_AMOUNT)), 0);
+        assertEquals(expectedIncomesAmount.compareTo(dataPoint.getStatistics().get(StatisticMetric.INCOMES_AMOUNT)), 0);
+        assertEquals(expectedSavingAmount.compareTo(dataPoint.getStatistics().get(StatisticMetric.SAVING_AMOUNT)), 0);
 
         ItemMetric salaryItemMetric = dataPoint.getIncomes().stream()
                 .filter(i -> i.getTitle().equals(salary.getTitle()))
@@ -145,9 +143,9 @@ public class StatisticsServiceImplTest {
                 .filter(i -> i.getTitle().equals(grocery.getTitle()))
                 .findFirst().get();
 
-        assertTrue(expectedNormalizedSalaryAmount.compareTo(salaryItemMetric.getAmount()) == 0);
-        assertTrue(expectedNormalizedVacationAmount.compareTo(vacationItemMetric.getAmount()) == 0);
-        assertTrue(expectedNormalizedGroceryAmount.compareTo(groceryItemMetric.getAmount()) == 0);
+        assertEquals(expectedNormalizedSalaryAmount.compareTo(salaryItemMetric.getAmount()), 0);
+        assertEquals(expectedNormalizedVacationAmount.compareTo(vacationItemMetric.getAmount()), 0);
+        assertEquals(expectedNormalizedGroceryAmount.compareTo(groceryItemMetric.getAmount()), 0);
 
        // assertEquals(rates, dataPoint.getRates());
 

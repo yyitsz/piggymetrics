@@ -1,10 +1,7 @@
 package com.yyitsz.piggymetrics2.statistics.repository;
 
 import com.google.common.collect.ImmutableMap;
-import com.yyitsz.piggymetrics2.statistics.domain.timeseries.DataPoint;
-import com.yyitsz.piggymetrics2.statistics.domain.timeseries.ExpenseItemMetric;
-import com.yyitsz.piggymetrics2.statistics.domain.timeseries.IncomeItemMetric;
-import com.yyitsz.piggymetrics2.statistics.domain.timeseries.StatisticMetric;
+import com.yyitsz.piggymetrics2.statistics.domain.timeseries.*;
 import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -37,10 +34,9 @@ public class DataPointRepositoryTest {
         String acName = "test-account";
         LocalDate date = LocalDate.now();
 
-
+        DataPointId dataPointId = new DataPointId(acName, date);
         DataPoint point = new DataPoint();
-        point.setAccountName(acName);
-        point.setDate(date);
+        point.setId(dataPointId);
         point.setIncomes(Lists.newArrayList(salary));
         point.setExpenses(Lists.newArrayList(grocery, vacation));
         point.setStatistics(new HashMap<>(ImmutableMap.of(
@@ -51,15 +47,15 @@ public class DataPointRepositoryTest {
 
         repository.save(point);
 
-        List<DataPoint> points = repository.findByAccountName(acName);
+        List<DataPoint> points = repository.findByIdAccount(acName);
         assertEquals(1, points.size());
-        assertEquals(date, points.get(0).getDate());
+        assertEquals(date, points.get(0).getId().getDate());
         assertEquals(point.getStatistics().size(), points.get(0).getStatistics().size());
         assertEquals(point.getIncomes().size(), points.get(0).getIncomes().size());
         assertEquals(point.getExpenses().size(), points.get(0).getExpenses().size());
     }
 
-    //@Test
+    @Test
     public void shouldRewriteDataPointWithinADay() {
 
         final BigDecimal earlyAmount = new BigDecimal(100);
@@ -67,9 +63,10 @@ public class DataPointRepositoryTest {
         String acName = "test-account";
         LocalDate date = LocalDate.ofEpochDay(0);
 
+        DataPointId dataPointId = new DataPointId(acName, date);
         DataPoint earlier = new DataPoint();
-        earlier.setAccountName(acName);
-        earlier.setDate(date);
+        earlier.setId(dataPointId);
+
         earlier.setStatistics(new HashMap<>(ImmutableMap.of(
                 StatisticMetric.SAVING_AMOUNT, earlyAmount
         )));
@@ -77,17 +74,16 @@ public class DataPointRepositoryTest {
         repository.save(earlier);
 
         DataPoint later = new DataPoint();
-        later.setAccountName(acName);
-        later.setDate(LocalDate.now());
+        later.setId(dataPointId);
         later.setStatistics(new HashMap<>(ImmutableMap.of(
                 StatisticMetric.SAVING_AMOUNT, lateAmount
         )));
-
+        later.setVersion(earlier.getVersion());
         repository.save(later);
 
         repository.flush();
 
-        List<DataPoint> points = repository.findByAccountName(acName);
+        List<DataPoint> points = repository.findByIdAccount(acName);
 
         assertEquals(1, points.size());
         assertEquals(lateAmount, points.get(0).getStatistics().get(StatisticMetric.SAVING_AMOUNT));

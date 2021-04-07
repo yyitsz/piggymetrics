@@ -1,6 +1,5 @@
 package com.yyitsz.piggymetrics2.statistics.service;
 
-import com.google.common.collect.ImmutableMap;
 import com.yyitsz.piggymetrics2.statistics.domain.*;
 import com.yyitsz.piggymetrics2.statistics.domain.timeseries.*;
 import com.yyitsz.piggymetrics2.statistics.repository.DataPointRepository;
@@ -35,7 +34,7 @@ public class StatisticsServiceImpl implements StatisticsService {
     @Override
     public List<DataPoint> findByAccountName(String accountName) {
         Assert.hasLength(accountName, "accountName is required.");
-        List<DataPoint> dataPointList = repository.findByAccountName(accountName);
+        List<DataPoint> dataPointList = repository.findByIdAccount(accountName);
         return dataPointList;
     }
 
@@ -46,11 +45,11 @@ public class StatisticsServiceImpl implements StatisticsService {
     public DataPoint save(String accountName, Account account) {
 
         LocalDate date = LocalDate.now();
-        final DataPoint dataPoint = repository.findByAccountNameAndDate(accountName, date)
+        DataPointId dataPointId = new DataPointId(accountName, date);
+        final DataPoint dataPoint = repository.findById(dataPointId)
                 .orElseGet(() -> {
                     DataPoint newDataPoint = new DataPoint();
-                    newDataPoint.setDate(date);
-                    newDataPoint.setAccountName(accountName);
+                    newDataPoint.setId(dataPointId);
                     return newDataPoint;
                 });
 
@@ -67,8 +66,9 @@ public class StatisticsServiceImpl implements StatisticsService {
         dataPoint.setIncomes(incomes);
         dataPoint.setExpenses(expenses);
         dataPoint.setStatistics(statistics);
+        dataPoint.setRates(ratesService.getCurrentRates());
 
-        log.debug("new datapoint has been created: {},{}", accountName, dataPoint.getDate());
+        log.debug("new datapoint has been created: {},{}", accountName, dataPoint.getId().getDate());
 
         return repository.save(dataPoint);
     }
