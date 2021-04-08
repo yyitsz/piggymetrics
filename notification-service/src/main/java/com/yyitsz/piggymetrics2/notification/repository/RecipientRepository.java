@@ -25,7 +25,7 @@ public interface RecipientRepository extends JpaRepository<Recipient, String> {
             "    from r.scheduledNotifications n " +
             "    where key(n) = 'BACKUP' " +
             "      and n.active = true " +
-            "      and n.lastNotified < (SYSDATE - n.frequency) )")
+            "      and n.lastNotified < (current_date - n.frequency) )")
     List<Recipient> findReadyForBackup();
 
     //	@Query("{ $and: [ {'scheduledNotifications.REMIND.active': true }, { $where: 'this.scheduledNotifications.REMIND.lastNotified < " +
@@ -35,7 +35,7 @@ public interface RecipientRepository extends JpaRepository<Recipient, String> {
             "    from r.scheduledNotifications n " +
             "    where key(n) = 'REMIND' " +
             "      and n.active = true " +
-            "      and n.lastNotified < (SYSDATE - n.frequency) )")
+            "      and n.lastNotified < (current_date - n.frequency) )")
     List<Recipient> findReadyForRemind();
 
 }

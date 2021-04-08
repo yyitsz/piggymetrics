@@ -32,6 +32,16 @@
                 <artifactId>common</artifactId>
                 <version>${project.version}</version>
             </dependency>
+            <dependency>
+                <groupId>com.jayway.jsonpath</groupId>
+                <artifactId>json-path</artifactId>
+                <version>2.2.0</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.security.experimental</groupId>
+                <artifactId>spring-security-oauth2-authorization-server</artifactId>
+                <version>0.1.0</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
     <modules>
@@ -42,5 +52,6 @@
         <module>statistics-service</module>
         <module>common</module>
         <module>notification-service</module>
+        <module>auth-service</module>
     </modules>
 </project>

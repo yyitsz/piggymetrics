@@ -1,0 +1,64 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+abstract class AbstractOAuth2Token {
+    String tokenValue
+    Instant issuedAt
+    Instant expiresAt
+}
+class OAuth2AccessToken {
+    TokenType tokenType //Bearer
+    Set<String> scopes
+}
+class OAuth2RefreshToken
+AbstractOAuth2Token <|-- OAuth2AccessToken
+AbstractOAuth2Token <|-- OAuth2RefreshToken
+
+class ClientRegistration {
+    String registrationId
+    String clientId
+    String clientSecret
+    ClientAuthenticationMethod clientAuthenticationMethod
+    AuthorizationGrantType authorizationGrantType
+    String redirectUri
+    Set<String> scopes
+    ProviderDetails providerDetails
+    String clientName
+}
+
+class OAuth2AuthorizedClient{
+    ClientRegistration clientRegistration
+    String principalName
+    OAuth2AccessToken accessToken
+    OAuth2RefreshToken refreshToken
+}
+
+class ClientAuthenticationMethod {
+	static ClientAuthenticationMethod BASIC//basic
+	static ClientAuthenticationMethod POST //post
+	static  ClientAuthenticationMethod NONE//none
+}
+
+class AuthorizationGrantType {
+	 static  AuthorizationGrantType AUTHORIZATION_CODE//authorization_code
+	 static  AuthorizationGrantType REFRESH_TOKEN//refresh_token
+	 static  AuthorizationGrantType CLIENT_CREDENTIALS//client_credentials
+	 static  AuthorizationGrantType PASSWORD//password
+}
+
+class ProviderDetails {
+ String authorizationUri
+ String tokenUri
+ UserInfoEndpoint userInfoEndpoint
+ String jwkSetUri
+ String issuerUri
+ Map<String, Object> configurationMetadata 
+}	
+
+class UserInfoEndpoint {
+String uri;
+AuthenticationMethod authenticationMethod // FORM/HEADER/QUERY, default: AuthenticationMethod.HEADER;
+String userNameAttributeName;	
+}
+
+@enduml
