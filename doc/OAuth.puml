@@ -1,18 +1,14 @@
 @startuml
 'https://plantuml.com/class-diagram
 
-abstract class AbstractOAuth2Token {
-    String tokenValue
-    Instant issuedAt
-    Instant expiresAt
+
+interface StandardClaimAccessor extends ClaimAccessor
+
+interface IdTokenClaimAccessor extends StandardClaimAccessor
+
+class OidcIdToken extends AbstractOAuth2Token implements IdTokenClaimAccessor {
+	Map<String, Object> claims;
 }
-class OAuth2AccessToken {
-    TokenType tokenType //Bearer
-    Set<String> scopes
-}
-class OAuth2RefreshToken
-AbstractOAuth2Token <|-- OAuth2AccessToken
-AbstractOAuth2Token <|-- OAuth2RefreshToken
 
 class ClientRegistration {
     String registrationId

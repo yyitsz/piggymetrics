@@ -1,0 +1,198 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+
+abstract class AbstractOAuth2Token {
+    String tokenValue
+    Instant issuedAt
+    Instant expiresAt
+}
+class OAuth2AccessToken extends AbstractOAuth2Token{
+    TokenType tokenType //Bearer
+    Set<String> scopes
+}
+class OAuth2RefreshToken extends AbstractOAuth2Token
+
+class OAuth2RefreshToken2 extends OAuth2RefreshToken {
+	Instant expiresAt;
+	Instant getExpiresAt()
+}
+class OAuth2AuthorizationCode extends AbstractOAuth2Token
+
+interface ClaimAccessor {
+	Map<String, Object> getClaims();
+	T getClaim(String claim)
+    Boolean containsClaim(String claim)
+}
+interface JwtClaimAccessor extends ClaimAccessor {
+	default URL getIssuer()
+	default String getSubject()
+	default List<String> getAudience()
+	default Instant getExpiresAt()
+	default Instant getNotBefore()
+	default Instant getIssuedAt()
+	default String getId()
+}
+
+class Jwt extends AbstractOAuth2Token implements JwtClaimAccessor {
+  Map<String, Object> headers;
+  Map<String, Object> claims;
+}
+
+interface GrantedAuthority {
+	String getAuthority();
+}
+
+class SimpleGrantedAuthority implements GrantedAuthority {
+    String role
+}
+
+class OAuth2UserAuthority implements GrantedAuthority {
+	String authority;
+	Map<String, Object> attributes;
+}
+
+interface Authentication extends Principal {
+    Collection<? extends GrantedAuthority> getAuthorities();
+    Object getCredentials();
+    Object getDetails();
+    Object getPrincipal();
+    boolean isAuthenticated();
+    void setAuthenticated(boolean isAuthenticated)
+}
+
+interface CredentialsContainer {
+	void eraseCredentials();
+}
+
+abstract class AbstractAuthenticationToken implements Authentication, CredentialsContainer {
+
+}
+
+class UsernamePasswordAuthenticationToken extends AbstractAuthenticationToken {
+	Object principal;
+	Object credentials;
+}
+
+class AnonymousAuthenticationToken extends AbstractAuthenticationToken {
+	Object principal;
+	int keyHash
+}
+
+class RememberMeAuthenticationToken extends AbstractAuthenticationToken {
+  Object principal;
+  int keyHash;
+}
+class BearerTokenAuthenticationToken extends AbstractAuthenticationToken {
+	String token
+}
+class OAuth2AuthenticationToken extends AbstractAuthenticationToken {
+	OAuth2User principal;
+	String authorizedClientRegistrationId;
+}
+
+class OAuth2AuthorizationCodeAuthenticationToken extends AbstractAuthenticationToken {
+    Map<String, Object> additionalParameters;
+	ClientRegistration clientRegistration
+	OAuth2AuthorizationExchange authorizationExchange;
+	OAuth2AccessToken accessToken;
+	OAuth2RefreshToken refreshToken;
+}
+
+abstract class AbstractOAuth2TokenAuthenticationToken<T extends AbstractOAuth2Token> extends AbstractAuthenticationToken {
+	Object principal;
+	Object credentials;
+	T token;
+}
+
+class JwtAuthenticationToken extends AbstractOAuth2TokenAuthenticationToken {
+/* Jwt */
+   String name
+}
+
+class BearerTokenAuthentication extends AbstractOAuth2TokenAuthenticationToken {
+/* OAuth2AccessToken */
+	Map<String, Object> attributes
+}
+
+
+interface AuthenticatedPrincipal {
+	String getName();
+}
+
+interface OAuth2AuthenticatedPrincipal extends AuthenticatedPrincipal {
+	<A> A getAttribute(String name)
+	Map<String, Object> getAttributes()
+	Collection<? extends GrantedAuthority> getAuthorities();
+}
+
+interface OAuth2User extends OAuth2AuthenticatedPrincipal
+
+class DefaultOAuth2AuthenticatedPrincipal implements OAuth2AuthenticatedPrincipal {
+ Map<String, Object> attributes;
+ Collection<GrantedAuthority> authorities;
+ String name;
+}
+
+class DefaultOAuth2User implements OAuth2User {
+  Set<GrantedAuthority> authorities;
+  Map<String, Object> attributes;
+  String nameAttributeKey;
+}
+
+interface AuthenticationManager {
+	Authentication authenticate(Authentication authentication) throws AuthenticationException;
+}
+
+class ProviderManager implements AuthenticationManager {
+private AuthenticationEventPublisher eventPublisher = new NullEventPublisher();
+	List<AuthenticationProvider> providers;
+	AuthenticationManager parent;
+}
+
+interface AuthenticationProvider {
+	Authentication authenticate(Authentication authentication) throws AuthenticationException;
+	boolean supports(Class<?> authentication);
+}
+abstract class AbstractUserDetailsAuthenticationProvider implements AuthenticationProvider
+
+class DaoAuthenticationProvider extends AbstractUserDetailsAuthenticationProvider {
+    PasswordEncoder passwordEncoder;
+    UserDetailsService userDetailsService;
+    UserDetailsPasswordService userDetailsPasswordService;
+}
+
+class AnonymousAuthenticationProvider implements AuthenticationProvider {
+    String key
+}
+class RememberMeAuthenticationProvider implements AuthenticationProvider {
+}
+
+class JwtAuthenticationProvider implements AuthenticationProvider {
+  JwtDecoder jwtDecoder;
+  Converter<Jwt, ? extends AbstractAuthenticationToken> jwtAuthenticationConverter
+}
+
+interface OAuth2AccessTokenResponseClient<T extends AbstractOAuth2AuthorizationGrantRequest> {
+	OAuth2AccessTokenResponse getTokenResponse(T authorizationGrantRequest);
+}
+
+class OAuth2AuthorizationCodeAuthenticationProvider implements AuthenticationProvider {
+    OAuth2AccessTokenResponseClient<OAuth2AuthorizationCodeGrantRequest> accessTokenResponseClient
+}
+interface OAuth2UserService<R extends OAuth2UserRequest, U extends OAuth2User> {
+	U loadUser(R userRequest) throws OAuth2AuthenticationException;
+}
+class DefaultOAuth2UserService implements OAuth2UserService {
+    //<OAuth2UserRequest, OAuth2User>
+}
+class OAuth2LoginAuthenticationProvider implements AuthenticationProvider {
+	OAuth2AuthorizationCodeAuthenticationProvider authorizationCodeAuthenticationProvider;
+	OAuth2UserService<OAuth2UserRequest, OAuth2User> userService;
+	GrantedAuthoritiesMapper authoritiesMapper
+}
+
+class OpaqueTokenAuthenticationProvider implements AuthenticationProvider {
+    OpaqueTokenIntrospector introspector
+}
+@enduml
