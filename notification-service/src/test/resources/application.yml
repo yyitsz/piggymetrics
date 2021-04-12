@@ -2,8 +2,11 @@ spring:
   application:
     name: notification-service
   cloud:
-  #    config:
-  #      uri: ${CONFIG_SERVER_URL:http://localhost:8888}
+    config:
+      #      uri: ${CONFIG_SERVER_URL:http://localhost:8888}
+      fail-fast: true
+      password: ${CONFIG_SERVICE_PASSWORD:abc123}
+      username: user
   config:
     import: optional:configserver:http://localhost:8888
   mail:

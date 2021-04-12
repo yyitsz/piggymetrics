@@ -34,6 +34,11 @@ spring:
       root: INFO
       org.yyitsz: DEBUG
       org.springframework: INFO
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://127.0.0.1:7090/uaa
 
 feign:
   circuitbreaker:

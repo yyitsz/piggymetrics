@@ -46,34 +46,34 @@ import java.util.UUID;
 @Configuration(proxyBeanMethods = false)
 public class AuthorizationServerConfig {
 
-//    @Bean
-//    @Order(Ordered.HIGHEST_PRECEDENCE)
-//    public SecurityFilterChain authorizationServerSecurityFilterChain(HttpSecurity http) throws Exception {
-//        OAuth2AuthorizationServerConfiguration.applyDefaultSecurity(http);
-//        return http.formLogin(Customizer.withDefaults()).build();
-//    }
+    @Bean
+    @Order(Ordered.HIGHEST_PRECEDENCE)
+    public SecurityFilterChain authorizationServerSecurityFilterChain(HttpSecurity http) throws Exception {
+        OAuth2AuthorizationServerConfiguration.applyDefaultSecurity(http);
+        return http.formLogin(Customizer.withDefaults()).build();
+    }
 
     @Bean
     public RegisteredClientRepository registeredClientRepository() {
         List<RegisteredClient> registeredClientList = new ArrayList<>();
-//        {
-//            //example
-//            RegisteredClient registeredClient = RegisteredClient.withId(UUID.randomUUID().toString())
-//                    .clientId("messaging-client")
-//                    .clientSecret("secret")
-//                    .clientAuthenticationMethod(ClientAuthenticationMethod.BASIC)
-//                    .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
-//                    .authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
-//                    .authorizationGrantType(AuthorizationGrantType.CLIENT_CREDENTIALS)
-//                    .redirectUri("http://127.0.0.1:8080/login/oauth2/code/messaging-client-oidc")
-//                    .redirectUri("http://127.0.0.1:8080/authorized")
-//                    .scope(OidcScopes.OPENID)
-//                    .scope("message.read")
-//                    .scope("message.write")
-//                    .clientSettings(clientSettings -> clientSettings.requireUserConsent(true))
-//                    .build();
-//            registeredClientList.add(registeredClient);
-//        }
+        {
+            //example
+            RegisteredClient registeredClient = RegisteredClient.withId(UUID.randomUUID().toString())
+                    .clientId("messaging-client")
+                    .clientSecret("secret")
+                    .clientAuthenticationMethod(ClientAuthenticationMethod.BASIC)
+                    .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
+                    .authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
+                    .authorizationGrantType(AuthorizationGrantType.CLIENT_CREDENTIALS)
+                    .redirectUri("http://127.0.0.1:8080/login/oauth2/code/messaging-client-oidc")
+                    .redirectUri("http://127.0.0.1:8080/authorized")
+                    .scope(OidcScopes.OPENID)
+                    .scope("message.read")
+                    .scope("message.write")
+                    .clientSettings(clientSettings -> clientSettings.requireUserConsent(true))
+                    .build();
+            registeredClientList.add(registeredClient);
+        }
         {
             RegisteredClient registeredClient = RegisteredClient.withId(UUID.randomUUID().toString())
                     .clientId("browser")
@@ -127,6 +127,6 @@ public class AuthorizationServerConfig {
 
     @Bean
     public ProviderSettings providerSettings() {
-        return new ProviderSettings().issuer("http://auth-service:7090");
+        return new ProviderSettings().issuer("http://127.0.0.1:7090/uaa");
     }
 }

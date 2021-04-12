@@ -7,12 +7,7 @@ logging:
     org.springframework.security: INFO
     org.springframework.security.oauth2: INFO
 
-spring:
-  security:
-    oauth2:
-      resourceserver:
-        jwt:
-          issuer-uri: http://auth-service:7090
+
 
 eureka:
   instance:
@@ -22,9 +17,88 @@ eureka:
       defaultZone: http://localhost:8761/eureka/
 
 feign:
+  circuitbreaker:
+    enabled: true
   client:
     config:
       default:
         connectTimeout: 5000
         readTimeout: 5000
-        loggerLevel: basic
+        loggerLevel: full
+      statistics-service:
+        connectTimeout: 5000
+        readTimeout: 5000
+        loggerLevel: full
+      account-service:
+        connectTimeout: 5000
+        readTimeout: 5000
+        loggerLevel: full
+      notification-service:
+        connectTimeout: 5000
+        readTimeout: 5000
+        loggerLevel: full
+
+resilience4j.circuitbreaker:
+  configs:
+    default:
+      slidingWindowSize: 100
+      permittedNumberOfCallsInHalfOpenState: 10
+      waitDurationInOpenState: 10000
+      failureRateThreshold: 60
+      eventConsumerBufferSize: 10
+      registerHealthIndicator: true
+  instances:
+    statistics-service:
+      baseConfig: default
+    auth-service:
+      baseConfig: default
+    notification-service:
+      baseConfig: default
+    account-service:
+      baseConfig: default
+
+resilience4j.retry:
+  instances:
+    backendA:
+      maxAttempts: 3
+      waitDuration: 10s
+      enableExponentialBackoff: true
+      exponentialBackoffMultiplier: 2
+      retryExceptions:
+        - org.springframework.web.client.HttpServerErrorException
+        - java.io.IOException
+      ignoreExceptions:
+      #- io.github.robwin.exception.BusinessException
+    backendB:
+      maxAttempts: 3
+      waitDuration: 10s
+      retryExceptions:
+        - org.springframework.web.client.HttpServerErrorException
+        - java.io.IOException
+      ignoreExceptions:
+      #- io.github.robwin.exception.BusinessException
+
+resilience4j.bulkhead:
+  instances:
+    statistics-service:
+      maxConcurrentCalls: 10
+    auth-service:
+      maxConcurrentCalls: 10
+    notification-service:
+      maxWaitDuration: 10ms
+      maxConcurrentCalls: 20
+    account-service:
+      maxConcurrentCalls: 10
+
+resilience4j.thread-pool-bulkhead:
+  configs:
+    default:
+      contextPropagators:
+        - com.yyitsz.piggymetrics2.common.resilience4j.SecurityContextPropagator
+        - com.yyitsz.piggymetrics2.common.resilience4j.RequestAttributesPropagator
+  instances:
+    statistics-service:
+      baseConfig: default
+      maxThreadPoolSize: 1
+      coreThreadPoolSize: 1
+      queueCapacity: 1

@@ -14,7 +14,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 /**
  * @author cdov
  */
-@Configuration
+//@Configuration
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired

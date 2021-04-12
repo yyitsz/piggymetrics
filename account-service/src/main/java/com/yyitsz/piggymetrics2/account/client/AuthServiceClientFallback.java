@@ -4,7 +4,7 @@ import com.yyitsz.piggymetrics2.account.domain.User;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
-@Component
+//@Component
 @Slf4j
 public class AuthServiceClientFallback implements AuthServiceClient {
     @Override

@@ -1,17 +1,11 @@
 spring:
   application:
     name: registry
-#  cloud:
-#    config:
-#      uri: ${CONFIG_SERVER_URL:http://localhost:8888}
+  cloud:
+    config:
+      #      uri: ${CONFIG_SERVER_URL:http://localhost:8888}
+      fail-fast: true
+      password: ${CONFIG_SERVICE_PASSWORD:abc123}
+      username: user
   config:
     import: optional:configserver:http://localhost:8888
-
-eureka:
-  instance:
-    prefer-ip-address: true
-  client:
-    registerWithEureka: false
-    fetchRegistry: false
-  server:
-    waitTimeInMsWhenSyncEmpty: 0

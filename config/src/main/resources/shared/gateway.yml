@@ -24,7 +24,7 @@ spring:
 
       routes:
         - id: auth-service
-          uri: lb://auth-service:5000
+          uri: lb://auth-service:7090
           predicates:
             - Path=/uaa/**
         - id: account-service

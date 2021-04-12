@@ -36,12 +36,4 @@ spring:
       org.springframework: INFO
 
 #example for feign
-feign:
-  circuitbreaker:
-    enabled: true
-  client:
-    config:
-      statistics-service:
-        connectTimeout: 5000
-        readTimeout: 5000
-        loggerLevel: full
+

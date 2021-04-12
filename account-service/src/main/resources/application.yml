@@ -1,40 +1,56 @@
-server:
-  servlet:
-    context-path: /accounts
-  port: 7010
-
 spring:
   application:
     name: account-service
   cloud:
-  #    config:
-  #      uri: ${CONFIG_SERVER_URL:http://localhost:8888}
+    config:
+      #      uri: ${CONFIG_SERVER_URL:http://localhost:8888}
+      fail-fast: true
+      password: ${CONFIG_SERVICE_PASSWORD:abc123}
+      username: user
   config:
     import: optional:configserver:http://localhost:8888
-  datasource:
-    url: jdbc:h2:mem:h2test;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
-    platform: h2
-    username: sa
-    password:
-    driverClassName: org.h2.Driver
-  jpa:
-    database-platform: org.hibernate.dialect.H2Dialect
-    hibernate:
-      ddl-auto: update
-    properties:
-      hibernate:
-        show_sql: true
-        use_sql_comments: true
-        format_sql: true
-  h2:
-    console:
-      enabled: true
-      path: /console
-      settings:
-        trace: false
-        web-allow-others: false
-logging:
-  level:
-    root: INFO
-    org.yyitsz: DEBUG
-    org.springframework: INFO
+
+  security:
+    oauth2:
+      client:
+        registration:
+          messaging-client-oidc:
+            provider: spring
+            client-id: messaging-client
+            client-secret: secret
+            authorization-grant-type: authorization_code
+            redirect-uri: "http://127.0.0.1:8080/login/oauth2/code/{registrationId}"
+            scope: openid
+            client-name: messaging-client-oidc
+          messaging-client-authorization-code:
+            provider: spring
+            client-id: messaging-client
+            client-secret: secret
+            authorization-grant-type: authorization_code
+            redirect-uri: "http://127.0.0.1:8080/authorized"
+            scope: message.read,message.write
+            client-name: messaging-client-authorization-code
+          statistics-service:
+            provider: spring
+            client-id: statistics-service
+            client-secret: password
+            authorization-grant-type: client_credentials
+            scope: server
+            client-name: statistics-service
+          notification-service:
+            provider: spring
+            client-id: notification-service
+            client-secret: password
+            authorization-grant-type: client_credentials
+            scope: server
+            client-name: notification-service
+          account-service:
+            provider: spring
+            client-id: account-service
+            client-secret: password
+            authorization-grant-type: client_credentials
+            scope: server
+            client-name: account-service
+        provider:
+          spring:
+            issuer-uri: http://127.0.0.1:7090/uaa

@@ -8,7 +8,9 @@ spring:
       server:
         native:
           search-locations: classpath:/shared
-
+  security:
+    user:
+      password: ${CONFIG_SERVICE_PASSWORD:abc123}
 
 server:
   port: 8888

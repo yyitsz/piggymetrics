@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 /**
  * @author cdov
  */
-@Component
+//@Component
 @Slf4j
 public class StatisticsServiceClientFallback implements StatisticsServiceClient {
 
