@@ -56,3 +56,21 @@ spring:
     port: 25
     smtp:
       auth: false
+
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://127.0.0.1:7090/uaa
+      client:
+        registration:
+          notification-service:
+            provider: spring
+            client-id: notification-service
+            client-secret: password
+            authorization-grant-type: client_credentials
+            scope: server
+            client-name: notification-service
+        provider:
+          spring:
+            issuer-uri: http://127.0.0.1:7090/uaa

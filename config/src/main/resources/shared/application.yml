@@ -18,7 +18,7 @@ eureka:
 
 feign:
   circuitbreaker:
-    enabled: true
+    enabled: false
   client:
     config:
       default:
@@ -102,3 +102,33 @@ resilience4j.thread-pool-bulkhead:
       maxThreadPoolSize: 1
       coreThreadPoolSize: 1
       queueCapacity: 1
+    auth-service:
+      baseConfig: default
+      maxThreadPoolSize: 1
+      coreThreadPoolSize: 1
+      queueCapacity: 1
+    notification-service:
+      baseConfig: default
+      maxThreadPoolSize: 1
+      coreThreadPoolSize: 1
+      queueCapacity: 1
+    account-service:
+      baseConfig: default
+      maxThreadPoolSize: 1
+      coreThreadPoolSize: 1
+      queueCapacity: 1
+
+resilience4j.timelimiter:
+  instances:
+    statistics-service:
+      timeoutDuration: 60s
+      cancelRunningFuture: true
+    auth-service:
+      timeoutDuration: 60s
+      cancelRunningFuture: true
+    notification-service:
+      timeoutDuration: 60s
+      cancelRunningFuture: true
+    account-service:
+      timeoutDuration: 60s
+      cancelRunningFuture: true

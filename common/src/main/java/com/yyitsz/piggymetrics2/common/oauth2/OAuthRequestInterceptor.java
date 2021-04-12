@@ -1,11 +1,10 @@
-package com.yyitsz.piggymetrics2.account.config;
+package com.yyitsz.piggymetrics2.common.oauth2;
 
 import feign.RequestInterceptor;
 import feign.RequestTemplate;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -20,9 +19,6 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -56,8 +52,9 @@ public class OAuthRequestInterceptor implements RequestInterceptor {
     private String defaultClientRegistrationId;
     private boolean defaultOAuth2AuthorizedClient;
 
-    public OAuthRequestInterceptor(OAuth2AuthorizedClientManager manager) {
+    public OAuthRequestInterceptor(OAuth2AuthorizedClientManager manager, String defaultClientRegistrationId) {
         this.authorizedClientManager = manager;
+        this.defaultClientRegistrationId = defaultClientRegistrationId;
     }
 
     @Override
@@ -65,7 +62,7 @@ public class OAuthRequestInterceptor implements RequestInterceptor {
         Map<String, Object> attrs = new ConcurrentHashMap<>();
         populateDefaultRequestResponse(attrs);
         populateDefaultAuthentication(attrs);
-        attrs.put(CLIENT_REGISTRATION_ID_ATTR_NAME, "account-service");
+        attrs.put(CLIENT_REGISTRATION_ID_ATTR_NAME, defaultClientRegistrationId);
         String clientRegistrationId = resolveClientRegistrationId(attrs);
         OAuth2AuthorizedClient oAuth2AuthorizedClient = authorizeClient(clientRegistrationId, attrs);
         bearer(requestTemplate, oAuth2AuthorizedClient, attrs);
@@ -209,43 +206,5 @@ public class OAuthRequestInterceptor implements RequestInterceptor {
         // thread via subscribeOn(Schedulers.boundedElastic()) since it performs a
         // blocking I/O operation using RestTemplate internally
         return this.authorizedClientManager.authorize(reauthorizeRequest);
-    }
-
-    private Authentication createPrincipal() {
-        return new Authentication() {
-            @Override
-            public Collection<? extends GrantedAuthority> getAuthorities() {
-                return Collections.emptySet();
-            }
-
-            @Override
-            public Object getCredentials() {
-                return null;
-            }
-
-            @Override
-            public Object getDetails() {
-                return null;
-            }
-
-            @Override
-            public Object getPrincipal() {
-                return this;
-            }
-
-            @Override
-            public boolean isAuthenticated() {
-                return false;
-            }
-
-            @Override
-            public void setAuthenticated(boolean isAuthenticated) throws IllegalArgumentException {
-            }
-
-            @Override
-            public String getName() {
-                return "backend";
-            }
-        };
     }
 }

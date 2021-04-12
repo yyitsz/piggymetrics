@@ -15,6 +15,7 @@ import org.springframework.util.Assert;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -44,11 +45,11 @@ public class ExchangeRatesServiceImpl implements ExchangeRatesService {
             log.info("exchange rates has been updated: {}", container);
         }
 
-        return ImmutableMap.of(
+        return new HashMap<>(ImmutableMap.of(
                 Currency.EUR, container.getRates().get(Currency.EUR.name()),
                 Currency.RUB, container.getRates().get(Currency.RUB.name()),
                 Currency.USD, BigDecimal.ONE
-        );
+        ));
     }
 
     /**

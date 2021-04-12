@@ -34,6 +34,20 @@ spring:
       root: INFO
       org.yyitsz: DEBUG
       org.springframework: INFO
-
-#example for feign
-
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://127.0.0.1:7090/uaa
+      client:
+        registration:
+          account-service:
+            provider: spring
+            client-id: account-service
+            client-secret: password
+            authorization-grant-type: client_credentials
+            scope: server
+            client-name: account-service
+        provider:
+          spring:
+            issuer-uri: http://127.0.0.1:7090/uaa

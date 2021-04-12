@@ -1,6 +1,8 @@
 package com.yyitsz.piggymetrics2.account.config;
 
+import com.yyitsz.piggymetrics2.common.oauth2.OAuthRequestInterceptor;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -62,7 +64,7 @@ public class ResourceServerConfig extends WebSecurityConfigurerAdapter {
 
     @Bean
     OAuthRequestInterceptor oAuthRequestInterceptor(OAuth2AuthorizedClientManager clientManager) {
-        return new OAuthRequestInterceptor(clientManager);
+        return new OAuthRequestInterceptor(clientManager, "account-service");
     }
 }
 

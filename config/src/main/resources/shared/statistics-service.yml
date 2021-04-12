@@ -34,11 +34,24 @@ spring:
       root: INFO
       org.yyitsz: DEBUG
       org.springframework: INFO
+
   security:
     oauth2:
       resourceserver:
         jwt:
           issuer-uri: http://127.0.0.1:7090/uaa
+      client:
+        registration:
+          statistics-service:
+            provider: spring
+            client-id: statistics-service
+            client-secret: password
+            authorization-grant-type: client_credentials
+            scope: server
+            client-name: statistics-service
+        provider:
+          spring:
+            issuer-uri: http://127.0.0.1:7090/uaa
 
 feign:
   circuitbreaker:
