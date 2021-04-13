@@ -7,7 +7,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 /**
  * @author cdov
  */
-@Configuration
+@Configuration(proxyBeanMethods = false)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override

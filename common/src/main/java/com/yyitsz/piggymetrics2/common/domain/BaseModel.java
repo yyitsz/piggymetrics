@@ -2,6 +2,8 @@ package com.yyitsz.piggymetrics2.common.domain;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -27,6 +29,11 @@ public class BaseModel implements Serializable {
     public void updateTimeWhenCreate() {
         createTime = LocalDateTime.now();
         updateTime = LocalDateTime.now();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null) {
+            createBy = authentication.getName();
+            updatedBy = authentication.getName();
+        }
     }
 
     @PreUpdate
@@ -35,5 +42,12 @@ public class BaseModel implements Serializable {
             createTime = LocalDateTime.now();
         }
         updateTime = LocalDateTime.now();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null) {
+            if (createBy == null || createBy.length() == 0) {
+                createBy = authentication.getName();
+            }
+            updatedBy = authentication.getName();
+        }
     }
 }

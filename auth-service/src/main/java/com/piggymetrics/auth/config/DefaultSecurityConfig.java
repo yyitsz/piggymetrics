@@ -16,8 +16,13 @@
 package com.piggymetrics.auth.config;
 
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.OAuth2AuthorizationServerConfiguration;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -31,6 +36,7 @@ import static org.springframework.security.config.Customizer.withDefaults;
  * @since 0.1.0
  */
 @EnableWebSecurity
+@Configuration(proxyBeanMethods = false)
 public class DefaultSecurityConfig {
 
 	// formatter:off
@@ -57,4 +63,10 @@ public class DefaultSecurityConfig {
 	}
 	// @formatter:on
 
+    @Bean
+    WebSecurityCustomizer webSecurityCustomizer() {
+	    return s -> {
+	        s.ignoring().antMatchers("/console/**", "/actuator/**");
+        };
+    }
 }

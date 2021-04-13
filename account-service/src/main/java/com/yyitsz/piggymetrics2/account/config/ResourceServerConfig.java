@@ -7,26 +7,36 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientManager;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientProvider;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientProviderBuilder;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.security.oauth2.client.web.DefaultOAuth2AuthorizedClientManager;
 import org.springframework.security.oauth2.client.web.OAuth2AuthorizedClientRepository;
+import org.springframework.security.web.SecurityFilterChain;
 
 /**
  * @author cdov
  */
 @EnableWebSecurity
-public class ResourceServerConfig extends WebSecurityConfigurerAdapter {
-    @Override
-    public void configure(HttpSecurity http) throws Exception {
-        http
+@Configuration(proxyBeanMethods = false)
+public class ResourceServerConfig {
+    @Bean
+    SecurityFilterChain configureHttpSecurity(HttpSecurity http) throws Exception {
+        http.authorizeRequests().antMatchers("/", "/demo").permitAll()
+                .and()
                 .authorizeRequests().anyRequest().permitAll()
         ;
+//        http
+//                .mvcMatcher("/**")
+//                .authorizeRequests()
+//                .mvcMatchers("/**").access("hasAuthority('SCOPE_server')")
+//                .and()
+//                .oauth2ResourceServer()
+//                .jwt();
 
-
-//        http.authorizeRequests()
+        //        http.authorizeRequests()
 //                .mvcMatchers("/", "/demo").access("hasAuthority('SCOPE_server')")
 //                .and()
 //                .authorizeRequests()
@@ -36,12 +46,15 @@ public class ResourceServerConfig extends WebSecurityConfigurerAdapter {
 //                .jwt()
 //        ;
 
+        return http.build();
     }
 
-    @Override
-    public void configure(WebSecurity web) throws Exception {
-        //ignore
-        web.ignoring().antMatchers("/**");
+    @Bean
+    WebSecurityCustomizer configureWebSecurity() throws Exception {
+        return web -> {
+            //web.ignoring().antMatchers("/console/**", "/actuator/**");
+            web.ignoring().antMatchers("/**");
+        };
     }
 
     @Bean
@@ -68,42 +81,3 @@ public class ResourceServerConfig extends WebSecurityConfigurerAdapter {
     }
 }
 
-/*@Configuration
-@EnableResourceServer
-public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
-
-    private final ResourceServerProperties sso;
-
-    @Autowired
-    public ResourceServerConfig(ResourceServerProperties sso) {
-        this.sso = sso;
-    }
-
-    @Bean
-    @ConfigurationProperties(prefix = "security.oauth2.client")
-    public ClientCredentialsResourceDetails clientCredentialsResourceDetails() {
-        return new ClientCredentialsResourceDetails();
-    }
-
-    @Bean
-    public RequestInterceptor oauth2FeignRequestInterceptor(){
-        return new OAuth2FeignRequestInterceptor(new DefaultOAuth2ClientContext(), clientCredentialsResourceDetails());
-    }
-
-    @Bean
-    public OAuth2RestTemplate clientCredentialsRestTemplate() {
-        return new OAuth2RestTemplate(clientCredentialsResourceDetails());
-    }
-
-    @Bean
-    public ResourceServerTokenServices tokenServices() {
-        return new CustomUserInfoTokenServices(sso.getUserInfoUri(), sso.getClientId());
-    }
-
-    @Override
-    public void configure(HttpSecurity http) throws Exception {
-        http.authorizeRequests()
-                .antMatchers("/" , "/demo").permitAll()
-                .anyRequest().authenticated();
-    }
-}*/

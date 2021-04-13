@@ -7,6 +7,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientManager;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientProvider;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientProviderBuilder;
@@ -16,10 +17,11 @@ import org.springframework.security.oauth2.client.web.OAuth2AuthorizedClientRepo
 import org.springframework.security.web.SecurityFilterChain;
 
 @EnableWebSecurity
-public class ResourceServerConfig extends WebSecurityConfigurerAdapter {
+@Configuration(proxyBeanMethods = false)
+public class ResourceServerConfig {
 
-    @Override
-    public void configure(HttpSecurity http) throws Exception {
+    @Bean
+    SecurityFilterChain configureHttpSecurity(HttpSecurity http) throws Exception {
         http
                 .mvcMatcher("/**")
                 .authorizeRequests()
@@ -27,12 +29,14 @@ public class ResourceServerConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .oauth2ResourceServer()
                 .jwt();
+        return http.build();
     }
 
-    @Override
-    public void configure(WebSecurity web) throws Exception {
-        //ignore
-        web.ignoring().antMatchers("/console/**");
+
+    @Bean
+    WebSecurityCustomizer configureWebSecurity() throws Exception {
+        return web ->
+                web.ignoring().antMatchers("/console/**", "/actuator/**");
     }
 
     @Bean
