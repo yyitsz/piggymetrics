@@ -1,0 +1,30 @@
+@startuml
+'https://plantuml.com/state-diagram
+
+scale 950 width
+
+PENDING:
+PROCESSING:
+COMPLETED:
+COMPLETED_PARTIAL: The others are FAILED except COMPLETED details.
+PARTIAL_COMPLETED: The others are PROCESSING except COMPLETED and FAILED details.
+REJECTED: All details are REJECTED or FAILED
+CANCELLED:
+
+[*] --> PENDING
+PENDING --> PROCESSING : Is STP or approved by user
+PROCESSING --> COMPLETED: All details are COMPLETED
+PROCESSING --> COMPLETED_PARTIAL
+PROCESSING --> PARTIAL_COMPLETED
+PARTIAL_COMPLETED --> COMPLETED
+PARTIAL_COMPLETED --> COMPLETED_PARTIAL
+PENDING --> CANCELLED: Cancelled by client
+PENDING --> REJECTED: Rejected request by user
+PROCESSING --> REJECTED: all details are FAILED
+COMPLETED --> [*]
+REJECTED --> [*]
+CANCELLED --> [*]
+COMPLETED_PARTIAL --> [*]
+
+
+@enduml
