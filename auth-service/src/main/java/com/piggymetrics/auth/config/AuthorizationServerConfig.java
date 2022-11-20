@@ -32,6 +32,7 @@ import org.springframework.security.oauth2.core.oidc.OidcScopes;
 import org.springframework.security.oauth2.server.authorization.client.InMemoryRegisteredClientRepository;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClient;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository;
+import org.springframework.security.oauth2.server.authorization.config.ClientSettings;
 import org.springframework.security.oauth2.server.authorization.config.ProviderSettings;
 import org.springframework.security.web.SecurityFilterChain;
 
@@ -59,58 +60,58 @@ public class AuthorizationServerConfig {
         {
             //example
             RegisteredClient registeredClient = RegisteredClient.withId(UUID.randomUUID().toString())
-                    .clientId("messaging-client")
-                    .clientSecret("secret")
-                    .clientAuthenticationMethod(ClientAuthenticationMethod.BASIC)
-                    .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
-                    .authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
-                    .authorizationGrantType(AuthorizationGrantType.CLIENT_CREDENTIALS)
-                    .redirectUri("http://127.0.0.1:8080/login/oauth2/code/messaging-client-oidc")
-                    .redirectUri("http://127.0.0.1:8080/authorized")
-                    .scope(OidcScopes.OPENID)
-                    .scope("message.read")
-                    .scope("message.write")
-                    .clientSettings(clientSettings -> clientSettings.requireUserConsent(true))
-                    .build();
+                .clientId("messaging-client")
+                .clientSecret("secret")
+                .clientAuthenticationMethod(ClientAuthenticationMethod.BASIC)
+                .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
+                .authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
+                .authorizationGrantType(AuthorizationGrantType.CLIENT_CREDENTIALS)
+                .redirectUri("http://127.0.0.1:8080/login/oauth2/code/messaging-client-oidc")
+                .redirectUri("http://127.0.0.1:8080/authorized")
+                .scope(OidcScopes.OPENID)
+                .scope("message.read")
+                .scope("message.write")
+                .clientSettings(ClientSettings.builder().requireAuthorizationConsent(true).build())
+                .build();
             registeredClientList.add(registeredClient);
         }
         {
             RegisteredClient registeredClient = RegisteredClient.withId(UUID.randomUUID().toString())
-                    .clientId("browser")
-                    .authorizationGrantType(AuthorizationGrantType.PASSWORD)
-                    .authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
-                    .scope("ui")
-                    .build();
+                .clientId("browser")
+                .authorizationGrantType(AuthorizationGrantType.PASSWORD)
+                .authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
+                .scope("ui")
+                .build();
             registeredClientList.add(registeredClient);
         }
         {
             RegisteredClient registeredClient = RegisteredClient.withId(UUID.randomUUID().toString())
-                    .clientId("account-service")
-                    .clientSecret("password")
-                    .authorizationGrantType(AuthorizationGrantType.CLIENT_CREDENTIALS)
-                    .authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
-                    .scope("server")
-                    .build();
+                .clientId("account-service")
+                .clientSecret("password")
+                .authorizationGrantType(AuthorizationGrantType.CLIENT_CREDENTIALS)
+                .authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
+                .scope("server")
+                .build();
             registeredClientList.add(registeredClient);
         }
         {
             RegisteredClient registeredClient = RegisteredClient.withId(UUID.randomUUID().toString())
-                    .clientId("statistics-service")
-                    .clientSecret("password")
-                    .authorizationGrantType(AuthorizationGrantType.CLIENT_CREDENTIALS)
-                    .authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
-                    .scope("server")
-                    .build();
+                .clientId("statistics-service")
+                .clientSecret("password")
+                .authorizationGrantType(AuthorizationGrantType.CLIENT_CREDENTIALS)
+                .authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
+                .scope("server")
+                .build();
             registeredClientList.add(registeredClient);
         }
         {
             RegisteredClient registeredClient = RegisteredClient.withId(UUID.randomUUID().toString())
-                    .clientId("notification-service")
-                    .clientSecret("password")
-                    .authorizationGrantType(AuthorizationGrantType.CLIENT_CREDENTIALS)
-                    .authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
-                    .scope("server")
-                    .build();
+                .clientId("notification-service")
+                .clientSecret("password")
+                .authorizationGrantType(AuthorizationGrantType.CLIENT_CREDENTIALS)
+                .authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
+                .scope("server")
+                .build();
             registeredClientList.add(registeredClient);
         }
 
@@ -127,6 +128,6 @@ public class AuthorizationServerConfig {
 
     @Bean
     public ProviderSettings providerSettings() {
-        return new ProviderSettings().issuer("http://127.0.0.1:7090/uaa");
+        return ProviderSettings.builder().issuer("http://127.0.0.1:7090/uaa").build();
     }
 }
